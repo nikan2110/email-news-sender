@@ -1,4 +1,3 @@
-import base64
 import os
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
@@ -7,17 +6,10 @@ from config import Session, server
 from constant import smtp_user, smtp_password
 from model import News
 import psycopg2
-from template import html_template
+from constant import html_template
 from tools import generate_news_block
 
 session = Session()
-
-
-def image_to_base64(image_path):
-
-    with open(image_path, 'rb') as image_file:
-        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-        return encoded_string
 
 
 def fetch_pending_news():
@@ -96,6 +88,8 @@ if __name__ == '__main__':
         news_ids = send_email(email_html)
 
         # update_news_status(news_ids)
+
+        session.close()
 
 
 
