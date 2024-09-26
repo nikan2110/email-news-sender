@@ -184,6 +184,11 @@ fabric.properties
 # idea folder, uncomment if you don't need it
 # .idea
 .idea/
-/news_image/*.png
+/news_images/*.png
+/news_images/*.jpeg
+/news_images/*.jpg
 /news.csv
 *.jpg
+/basic_images/*.png
+/basic_images/*.jpeg
+/basic_images/*.jpg
