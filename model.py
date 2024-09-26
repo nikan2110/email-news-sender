@@ -9,6 +9,7 @@ class News(Base):
     news_title = Column(String)
     news_description = Column(String)
     is_news_send = Column(Boolean, default=False)
+    news_link = Column(String)
 
     def __repr__(self):
         return f"<News(" \

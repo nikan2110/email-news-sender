@@ -1,16 +1,16 @@
 def generate_news_block(news_item):
     news_block = f"""
     <!-- News Block -->
-    
     <tr>
         <td style="padding: 10px; background-color: #fcefe3; direction: rtl; text-align: right;">
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center">
                 <tr>
                     <!-- Right image -->
-                    
                     <td width="220" style="text-align: right;">
+                    <a href="{news_item.news_link}" target="_blank">
                         <img src="cid:news_image_{news_item.news_id}" alt="News Image" width="228" 
                         style="display: block; border-radius: 5px;">
+                    </a>
                     </td>
                     
                     <!-- Spacer -->
@@ -19,7 +19,6 @@ def generate_news_block(news_item):
                     </td>
                     
                     <!-- Left content (Text in Hebrew) -->
-                    
                     <td width="328" style="direction: rtl; text-align: right;">
                         <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;">{news_item.news_title}</h2>
                         <p style="color: #555555; font-size: 14px; direction: rtl; margin: 0;">
@@ -39,4 +38,3 @@ def generate_news_block(news_item):
     </tr>
     """
     return news_block
-
