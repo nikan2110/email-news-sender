@@ -2,17 +2,11 @@ import os
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from config import Session, server
+from config import server
 from constant import smtp_user, smtp_password
-from model import News, NewsMainPage
+from db import *
 import psycopg2
 from tools import generate_news_block, generate_main_page, generate_news_block_html_page
-
-session = Session()
-
-
-def fetch_pending_news():
-    return session.query(News).filter_by(is_news_send=False).all()
 
 
 def generate_news_block_html(news_items, main_page_content):
@@ -92,22 +86,6 @@ def send_email(main_page_html, html_content):
     return news_ids
 
 
-def update_news_block_status(news_ids):
-    session.query(News).filter(News.news_id.in_(news_ids)).update({"is_news_send": True})
-    session.commit()
-
-
-
-def fetch_main_page():
-    return session.query(NewsMainPage).filter_by(is_send=False).all()
-
-
-def update_news_main_page_status(main_page_news_id):
-    (session.query(NewsMainPage).filter(NewsMainPage.main_page_news_id == main_page_news_id)
-     .update({"is_send": True}))
-    session.commit()
-    pass
-
 
 if __name__ == '__main__':
     try:
@@ -125,7 +103,7 @@ if __name__ == '__main__':
             update_news_main_page_status(main_page_content.main_page_news_id)
             update_news_block_status(news_ids)
     finally:
-        session.close()
+        session_close()
 
 
 
