@@ -22,7 +22,8 @@ class News(Base):
 class NewsMainPage(Base):
     __tablename__ = 'news_main_page'
 
-    news_date = Column(Date, primary_key=True)
+    main_page_news_id = Column(Integer, primary_key=True)
+    news_date = Column(Date)
     title = Column(String)
     description = Column(String)
     is_send = Column(Boolean, default=False)

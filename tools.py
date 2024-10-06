@@ -1,45 +1,3 @@
-def generate_news_block(news_item):
-    news_block = f"""
-    <!-- News Block -->
-    <tr>
-        <td style="padding: 10px; background-color: #fcefe3; direction: rtl; text-align: right;">
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center">
-                <tr>
-                    <!-- Right image -->
-                    <td width="220" style="text-align: right;">
-                    <a href="{news_item.news_link}" target="_blank">
-                        <img src="cid:news_image_{news_item.news_id}" alt="News Image" width="228" 
-                        style="display: block; border-radius: 5px;">
-                    </a>
-                    </td>
-                    
-                    <!-- Spacer -->
-                    <td width="20">
-                        &nbsp;
-                    </td>
-                    
-                    <!-- Left content (Text in Hebrew) -->
-                    <td width="328" style="direction: rtl; text-align: right;">
-                        <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;">{news_item.news_title}</h2>
-                        <p style="color: #555555; font-size: 14px; direction: rtl; margin: 0;">
-                        {news_item.news_description}
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-
-    <!-- Small white space between news blocks -->
-    <tr>
-        <td style="padding: 0.5px 0;">
-              &nbsp;
-        </td>
-    </tr>
-    """
-    return news_block
-
-
 def generate_main_page(main_page_content):
     main_page_block = f""" 
 <!DOCTYPE html>
@@ -61,16 +19,16 @@ def generate_main_page(main_page_content):
             </td>
         </tr>
 
-        <!-- Title and Date Block аналогично футеру -->
+        <!-- Title and Date Block  -->
 <tr>
     <td style="padding: 10px 0; background-color: #7a2e2e;">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
-                <!-- Дата (слева) -->
+                <!-- Date -->
                 <td style="text-align: left; font-size: 14px; color: white; padding-left: 20px;">
                     {main_page_content.news_date}
                 </td>
-                <!-- Заголовок (справа) -->
+                <!-- Title -->
                 <td style="text-align: right; direction: rtl; color: white; 
                 font-size: 20px; font-weight: bold; padding-right: 20px;">
                     {main_page_content.title}
@@ -83,12 +41,12 @@ def generate_main_page(main_page_content):
         <!-- Main content with background and padding -->
         <tr>
             <td style="padding: 20px; background-color: #fafafa; text-align: right; direction: rtl; color: #333333; 
-            font-size: 16px; line-height: 1.8;">
+            font-size: 15px; line-height: 2;">
                 {main_page_content.description}
             </td>
         </tr>
 
-        <!-- Footer аналогично футеру (оставляем как есть) -->
+        <!-- Footer  -->
         <tr>
             <td style="padding: 20px; background-color: #ffffff;">
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -111,6 +69,7 @@ def generate_main_page(main_page_content):
 </html>
     """
     return main_page_block
+
 
 def generate_news_block_html_page(main_page_content):
     news_html_template = f"""
@@ -143,3 +102,45 @@ def generate_news_block_html_page(main_page_content):
         </tr>
 """
     return news_html_template
+
+
+def generate_news_block(news_item):
+    news_block = f"""
+    <!-- News Block -->
+    <tr>
+        <td style="padding: 10px; background-color: #fcefe3; direction: rtl; text-align: right;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center">
+                <tr>
+                    <!-- Right image -->
+                    <td width="220" style="text-align: right;">
+                    <a href="{news_item.news_link}" target="_blank">
+                        <img src="cid:news_image_{news_item.news_id}" alt="News Image" width="228" 
+                        style="display: block; border-radius: 5px;">
+                    </a>
+                    </td>
+
+                    <!-- Spacer -->
+                    <td width="20">
+                        &nbsp;
+                    </td>
+
+                    <!-- Left content (Text in Hebrew) -->
+                    <td width="328" style="direction: rtl; text-align: right;">
+                        <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;">{news_item.news_title}</h2>
+                        <p style="color: #555555; font-size: 16px; direction: rtl; margin: 0;">
+                        {news_item.news_description}
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <!-- Small white space between news blocks -->
+    <tr>
+        <td style="padding: 0.5px 0;">
+              &nbsp;
+        </td>
+    </tr>
+    """
+    return news_block

@@ -92,7 +92,7 @@ def send_email(main_page_html, html_content):
     return news_ids
 
 
-def update_news_status(news_ids):
+def update_news_block_status(news_ids):
     session.query(News).filter(News.news_id.in_(news_ids)).update({"is_news_send": True})
     session.commit()
 
@@ -102,25 +102,29 @@ def fetch_main_page():
     return session.query(NewsMainPage).filter_by(is_send=False).all()
 
 
+def update_news_main_page_status(main_page_news_id):
+    (session.query(NewsMainPage).filter(NewsMainPage.main_page_news_id == main_page_news_id)
+     .update({"is_send": True}))
+    session.commit()
+    pass
+
+
 if __name__ == '__main__':
+    try:
+        news_main_page = fetch_main_page()
+        pending_news = fetch_pending_news()
 
-    news_main_page = fetch_main_page()
+        if news_main_page and pending_news:
+            main_page_content = news_main_page[0]
 
-    pending_news = fetch_pending_news()
+            main_page_html = generate_main_page(main_page_content)
+            news_block_html = generate_news_block_html(pending_news,main_page_content)
 
-    if news_main_page:
-        main_page_content = news_main_page[0]
+            news_ids = send_email(main_page_html,news_block_html)
 
-        main_page_html = generate_main_page(main_page_content)
-
-    if pending_news:
-
-        news_block_html = generate_news_block_html(pending_news,main_page_content)
-
-        news_ids = send_email(main_page_html,news_block_html)
-
-        # update_news_status(news_ids)
-
+            update_news_main_page_status(main_page_content.main_page_news_id)
+            update_news_block_status(news_ids)
+    finally:
         session.close()
 
 
