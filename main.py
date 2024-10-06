@@ -3,12 +3,10 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from config import Session, server
-from constant import smtp_user, smtp_password, main_page_content, main_page_html_template_begin, \
-    main_page_html_template_end
-from model import News
+from constant import smtp_user, smtp_password
+from model import News, NewsMainPage
 import psycopg2
-from constant import news_html_template
-from tools import generate_news_block
+from tools import generate_news_block, generate_main_page, generate_news_block_html_page
 
 session = Session()
 
@@ -17,18 +15,20 @@ def fetch_pending_news():
     return session.query(News).filter_by(is_news_send=False).all()
 
 
-def generate_news_block_html(news_items, html_template):
+def generate_news_block_html(news_items, main_page_content):
+    news_block_html_page = generate_news_block_html_page(main_page_content)
+
     for news_item in news_items:
         news_block = generate_news_block(news_item)
-        html_template += news_block
+        news_block_html_page += news_block
 
-    html_template += """
+    news_block_html_page += """
         </table>
         </body>
         </html>
     """
 
-    return html_template
+    return news_block_html_page
 
 
 def add_header_and_news_images_to_news_block(msg):
@@ -97,31 +97,25 @@ def update_news_status(news_ids):
     session.commit()
 
 
-def generate_main_page_html(main_page_html_template_begin, main_page_html_template_end, main_page_content):
-    main_page_html = ""
-    main_page_html += main_page_html_template_begin
-    main_page_html += f"""
-    <tr>
-        <td style="padding: 20px; text-align: right; direction: rtl; background-color: #ffffff; color: #000000; 
-        font-size: 16px; line-height: 1.5;">
-            "{main_page_content}"
-        </td>
-    </tr>"""
-    
-    main_page_html += main_page_html_template_end
 
-    return main_page_html
+def fetch_main_page():
+    return session.query(NewsMainPage).filter_by(is_send=False).all()
 
 
 if __name__ == '__main__':
+
+    news_main_page = fetch_main_page()
+
     pending_news = fetch_pending_news()
 
-    if pending_news:
-        main_page_html = generate_main_page_html(main_page_html_template_begin,
-                                                 main_page_html_template_end,
-                                                 main_page_content)
+    if news_main_page:
+        main_page_content = news_main_page[0]
 
-        news_block_html = generate_news_block_html(pending_news, news_html_template)
+        main_page_html = generate_main_page(main_page_content)
+
+    if pending_news:
+
+        news_block_html = generate_news_block_html(pending_news,main_page_content)
 
         news_ids = send_email(main_page_html,news_block_html)
 
