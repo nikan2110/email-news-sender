@@ -1,3 +1,8 @@
+import os
+
+from constant import IMAGE_FOLDER
+
+
 def generate_main_page(main_page_content):
     main_page_block = f""" 
 <!DOCTYPE html>
@@ -126,9 +131,9 @@ def generate_news_block(news_item):
 
                     <!-- Left content (Text in Hebrew) -->
                     <td width="328" style="direction: rtl; text-align: right;">
-                        <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;">{news_item.news_title}</h2>
+                        <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;">{news_item.title}</h2>
                         <p style="color: #555555; font-size: 16px; direction: rtl; margin: 0;">
-                        {news_item.news_description}
+                        {news_item.description}
                         </p>
                     </td>
                 </tr>
@@ -144,3 +149,7 @@ def generate_news_block(news_item):
     </tr>
     """
     return news_block
+
+
+def get_image_path(news_id):
+    return os.path.join(IMAGE_FOLDER, f"{news_id}.png")

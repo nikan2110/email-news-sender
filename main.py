@@ -1,109 +1,74 @@
 import os
-from email.mime.image import MIMEImage
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from config import server
-from constant import smtp_user, smtp_password
-from db import *
-import psycopg2
-from tools import generate_news_block, generate_main_page, generate_news_block_html_page
+import streamlit as st
+from db import fetch_pending_news, remove_news_block, add_news, get_next_news_id, update_news
+from email_sender import send_news
+from model import News
+from tools import get_image_path
 
+st.set_page_config(page_title="Email Sender", layout="wide")
 
-def generate_news_block_html(news_items, main_page_content):
-    news_block_html_page = generate_news_block_html_page(main_page_content)
+news_block_tab, main_page_tab, send_mail_tab = st.tabs(["News block", "Main page", "Send email"])
 
-    for news_item in news_items:
-        news_block = generate_news_block(news_item)
-        news_block_html_page += news_block
+def render_send_email_tab():
+    with send_mail_tab:
+        st.title("Mailing List Control Panel")
 
-    news_block_html_page += """
-        </table>
-        </body>
-        </html>
-    """
+        if st.button("🔴 Send Email"):
+            send_news()  # Логика отправки письма
+            st.success("Email was sent successfully")
 
-    return news_block_html_page
+def render_news_block_tab():
+    with news_block_tab:
+        st.header("Add new news")
 
+        new_news_id = get_next_news_id()
+        new_news_title = st.text_input("News title", key="new_news_title")
+        new_news_description = st.text_area("News description", key="new_news_description")
+        news_link = st.text_input("News link", key="new_news_link")
 
-def add_header_and_news_images_to_news_block(msg):
-    news_ids = []
-    with open("basic_images/header.jpg", 'rb') as img:
-        mime_img = MIMEImage(img.read())
-        mime_img.add_header('Content-ID', '<header_image>')
-        mime_img.add_header('Content-Disposition', 'inline', filename="header")
-        msg.attach(mime_img)
+        if st.button("Add new news", key="add_news"):
+            new_news = News(news_id=new_news_id, title=new_news_title, description=new_news_description, news_link=news_link, is_send=False)
+            add_news(new_news)
+            st.success("News added successfully")
 
-    for image_name in os.listdir("news_images"):
-        if image_name.endswith('.png'):
-            image_path = os.path.join("news_images", image_name)
-            image_id = image_name.split('.')[0]
+        news_blocks = fetch_pending_news()
+        news_blocks.sort(key=lambda x: x.news_id)
 
-            news_ids.append(image_id)
+        if not news_blocks:
+            st.write("There are no news for sending")
+        else:
+            for news in news_blocks:
+                st.subheader(f"News ID: {news.news_id}")
 
-            with open(image_path, 'rb') as img:
-                mime_img = MIMEImage(img.read())
-                mime_img.add_header('Content-ID', f'<news_image_{image_id}>')
-                mime_img.add_header('Content-Disposition', 'inline', filename=image_name)
-                msg.attach(mime_img)
+                image_column, title_description_link_column = st.columns([1, 2])
 
-    return news_ids
+                with title_description_link_column:
+                    title = st.text_input(f"News title ID {news.news_id}", news.title, key=f"title_{news.news_id}")
+                    description = st.text_area(f"News description ID {news.news_id}", news.description, key=f"description_{news.news_id}")
+                    link = st.text_input(f"News link ID {news.news_id}", news.news_link, key=f"link_{news.news_id}")
 
+                with image_column:
+                    image_path = get_image_path(news.news_id)
 
-def add_header_and_footer_images_to_main_page(msg):
-    with open("basic_images/header_main_page.jpg", 'rb') as img:
-        mime_img = MIMEImage(img.read())
-        mime_img.add_header('Content-ID', '<main_page_header_image>')
-        mime_img.add_header('Content-Disposition', 'inline', filename="main_page_header_image")
-        msg.attach(mime_img)
+                    if os.path.exists(image_path):
+                        st.image(image_path, caption=f"News image ID {news.news_id}", use_column_width=True)
+                    else:
+                        st.warning(f"News image {news.news_id} does not exist")
 
-    with open("basic_images/footer_main_page.png", 'rb') as img:
-        mime_img = MIMEImage(img.read())
-        mime_img.add_header('Content-ID', '<main_page_footer_image>')
-        mime_img.add_header('Content-Disposition', 'inline', filename="main_page_footer_image")
-        msg.attach(mime_img)
+                save_button_col, edit_button_col = st.columns(2)
 
+                with save_button_col:
+                    if st.button(f"Save changes for news ID {news.news_id}", key=f"save_{news.news_id}"):
 
-def send_email(main_page_html, html_content):
-    full_email_html = f"""{main_page_html}{html_content}"""
+                        update_news(news.news_id, title, description, link)
+                        st.success(f"Changes for news ID {news.news_id} were successfully saved.")
 
-    html_content_attachment = MIMEText(full_email_html, 'html')
-
-    msg = MIMEMultipart()
-    msg['Subject'] = "Week news"
-    msg['From'] = smtp_user
-    msg['To'] = "nikita.d@meuhedet.co.il"
-
-    msg.attach(html_content_attachment)
-
-    add_header_and_footer_images_to_main_page(msg)
-    news_ids = add_header_and_news_images_to_news_block(msg)
-
-    server.starttls()
-    server.login(smtp_user, smtp_password)
-    server.send_message(msg)
-    server.quit()
-
-    return news_ids
-
-
+                with edit_button_col:
+                    if st.button(f"Delete news ID {news.news_id}", key=f"delete_{news.news_id}"):
+                        remove_news_block(news)
+                        st.success(f"News ID {news.news_id} was successfully deleted.")
 
 if __name__ == '__main__':
-    try:
-        news_main_page = fetch_main_page()
-        pending_news = fetch_pending_news()
-
-        if news_main_page and pending_news:
-            main_page_content = news_main_page[0]
-
-            main_page_html = generate_main_page(main_page_content)
-            news_block_html = generate_news_block_html(pending_news,main_page_content)
-
-            news_ids = send_email(main_page_html,news_block_html)
-
-            update_news_main_page_status(main_page_content.main_page_news_id)
-            update_news_block_status(news_ids)
-    finally:
-        session_close()
-
-
+    render_news_block_tab()
+    render_send_email_tab()
 

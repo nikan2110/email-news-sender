@@ -192,3 +192,4 @@ fabric.properties
 /basic_images/*.png
 /basic_images/*.jpeg
 /basic_images/*.jpg
+*.sql
