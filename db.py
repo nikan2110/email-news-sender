@@ -2,7 +2,6 @@ from sqlalchemy import func
 from config import Session
 from model import News, NewsMainPage
 
-# Функция для добавления новости
 def add_news(news):
     session = Session()
     try:
