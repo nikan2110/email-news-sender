@@ -1,13 +1,15 @@
 import os
 import streamlit as st
 from db import fetch_pending_news, remove_news_block, add_news, get_next_news_id, update_news
-from email_sender import send_news, make_html_for_preview
+from email_sender import send_news
+from html_builder_email_preview import make_html_for_preview
 from model import News
 from tools import get_image_path
 
 st.set_page_config(page_title="Email Sender", layout="wide")
 
-news_block_tab, main_page_tab, preview_tab, send_mail_tab = st.tabs(["News block", "Main page", "Preview", "Send email"])
+(news_block_tab, main_page_tab,
+ preview_tab, send_mail_tab) = st.tabs(["News block", "Main page", "Preview", "Send email"])
 
 def render_preview_tab():
     with preview_tab:
@@ -40,7 +42,8 @@ def render_news_block_tab():
         news_link = st.text_input("News link", key="new_news_link")
 
         if st.button("Add new news", key="add_news"):
-            new_news = News(news_id=new_news_id, title=new_news_title, description=new_news_description, news_link=news_link, is_send=False)
+            new_news = News(news_id=new_news_id, title=new_news_title, description=new_news_description,
+                            news_link=news_link, is_send=False)
             add_news(new_news)
             st.success("News added successfully")
 
@@ -57,7 +60,8 @@ def render_news_block_tab():
 
                 with title_description_link_column:
                     title = st.text_input(f"News title ID {news.news_id}", news.title, key=f"title_{news.news_id}")
-                    description = st.text_area(f"News description ID {news.news_id}", news.description, key=f"description_{news.news_id}")
+                    description = st.text_area(f"News description ID {news.news_id}", news.description,
+                                               key=f"description_{news.news_id}")
                     link = st.text_input(f"News link ID {news.news_id}", news.news_link, key=f"link_{news.news_id}")
 
                 with image_column:

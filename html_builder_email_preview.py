@@ -1,3 +1,6 @@
+from db import fetch_main_page, fetch_pending_news
+
+
 def generate_main_page_for_preview(main_page_content):
     main_page_block = f""" 
 <!DOCTYPE html>
@@ -159,3 +162,16 @@ def generate_news_block_html_for_preview(news_items, main_page_content):
     """
 
     return news_block_html_page
+
+def make_html_for_preview():
+    news_main_page = fetch_main_page()
+    pending_news = fetch_pending_news()
+
+    if news_main_page and pending_news:
+        main_page_content = news_main_page[0]
+
+        main_page_html = generate_main_page_for_preview(main_page_content)
+        news_block_html = generate_news_block_html_for_preview(pending_news, main_page_content)
+
+        full_email_html = f"""{main_page_html}{news_block_html}"""
+        return full_email_html

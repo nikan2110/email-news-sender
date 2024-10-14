@@ -1,3 +1,4 @@
+import logging
 import os
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
@@ -7,24 +8,7 @@ from constant import smtp_user, smtp_password
 from db import *
 import psycopg2
 
-from html_builder_email_preview import generate_main_page_for_preview, generate_news_block_html_for_preview
-from html_builder_email_main import generate_news_block, generate_main_page, generate_news_block_html_page
-
-
-def generate_news_block_html(news_items, main_page_content):
-    news_block_html_page = generate_news_block_html_page(main_page_content)
-
-    for news_item in news_items:
-        news_block = generate_news_block(news_item)
-        news_block_html_page += news_block
-
-    news_block_html_page += """
-        </table>
-        </body>
-        </html>
-    """
-
-    return news_block_html_page
+from html_builder_email_main import generate_main_page, generate_news_block_html, make_html_for_email
 
 
 def add_header_and_news_images_to_news_block(msg):
@@ -88,40 +72,21 @@ def send_email(main_page_html, html_content):
     return news_ids
 
 
-def make_html_for_preview():
-    news_main_page = fetch_main_page()
-    pending_news = fetch_pending_news()
-
-    if news_main_page and pending_news:
-        main_page_content = news_main_page[0]
-
-        main_page_html = generate_main_page_for_preview(main_page_content)
-        news_block_html = generate_news_block_html_for_preview(pending_news, main_page_content)
-
-        full_email_html = f"""{main_page_html}{news_block_html}"""
-        return full_email_html
-
 
 def send_news():
     try:
-        news_main_page = fetch_main_page()
-        pending_news = fetch_pending_news()
+        main_page_content, main_page_html, news_block_html = make_html_for_email()
 
-        if news_main_page and pending_news:
-            main_page_content = news_main_page[0]
+        news_ids = send_email(main_page_html,news_block_html)
 
-            main_page_html = generate_main_page(main_page_content)
-            news_block_html = generate_news_block_html(pending_news,main_page_content)
+        print(f"Main page id: {main_page_content.main_page_news_id}")
+        print(f"News ids: {news_ids}")
 
-            news_ids = send_email(main_page_html,news_block_html)
+        # update_news_main_page_status(main_page_content.main_page_news_id)
+        # update_news_block_status(news_ids)
 
-            print(f"Main page id: {main_page_content.main_page_news_id}")
-            print(f"News ids: {news_ids}")
-
-            # update_news_main_page_status(main_page_content.main_page_news_id)
-            # update_news_block_status(news_ids)
-    except:
-        pass
+    except Exception as error:
+        logging.exception("ERRORS: ")
 
 
 

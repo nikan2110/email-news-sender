@@ -1,3 +1,6 @@
+from db import fetch_main_page, fetch_pending_news
+
+
 def generate_main_page(main_page_content):
     main_page_block = f""" 
 <!DOCTYPE html>
@@ -71,7 +74,7 @@ def generate_main_page(main_page_content):
     return main_page_block
 
 
-def generate_news_block_html_page(main_page_content):
+def generate_news_block_canvas(main_page_content):
     news_html_template = f"""
 <!DOCTYPE html>
 <html lang="he">
@@ -104,7 +107,7 @@ def generate_news_block_html_page(main_page_content):
     return news_html_template
 
 
-def generate_news_block(news_item):
+def generate_news_block_content(news_item):
     news_block = f"""
     <!-- News Block -->
     <tr>
@@ -145,4 +148,29 @@ def generate_news_block(news_item):
     """
     return news_block
 
+def generate_news_block_html(news_items, main_page_content):
+    news_block_html_page = generate_news_block_canvas(main_page_content)
 
+    for news_item in news_items:
+        news_block = generate_news_block_content(news_item)
+        news_block_html_page += news_block
+
+    news_block_html_page += """
+        </table>
+        </body>
+        </html>
+    """
+
+    return news_block_html_page
+
+def make_html_for_email():
+    news_main_page = fetch_main_page()
+    pending_news = fetch_pending_news()
+
+    if news_main_page and pending_news:
+        main_page_content = news_main_page[0]
+
+        main_page_html = generate_main_page(main_page_content)
+        news_block_html = generate_news_block_html(pending_news, main_page_content)
+
+        return main_page_content, main_page_html, news_block_html
