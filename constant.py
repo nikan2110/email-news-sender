@@ -10,5 +10,5 @@ smtp_password = os.getenv('SMTP_PASSWORD')
 
 postgres_password = os.getenv('POSTGRES_PASSWORD')
 
-IMAGE_FOLDER = "news_images"
+IMAGE_FOLDER = "static/news_images"
 

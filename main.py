@@ -1,20 +1,33 @@
 import os
 import streamlit as st
 from db import fetch_pending_news, remove_news_block, add_news, get_next_news_id, update_news
-from email_sender import send_news
+from email_sender import send_news, make_html_for_preview
 from model import News
 from tools import get_image_path
 
 st.set_page_config(page_title="Email Sender", layout="wide")
 
-news_block_tab, main_page_tab, send_mail_tab = st.tabs(["News block", "Main page", "Send email"])
+news_block_tab, main_page_tab, preview_tab, send_mail_tab = st.tabs(["News block", "Main page", "Preview", "Send email"])
+
+def render_preview_tab():
+    with preview_tab:
+        html_for_preview = make_html_for_preview()
+
+        html_with_scroll = f"""
+        <div style="height: 100vh; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+            {html_for_preview}
+        </div>
+        """
+
+        st.markdown("### Email Preview:")
+        st.components.v1.html(html_with_scroll, height=700)
 
 def render_send_email_tab():
     with send_mail_tab:
         st.title("Mailing List Control Panel")
 
         if st.button("🔴 Send Email"):
-            send_news()  # Логика отправки письма
+            send_news()
             st.success("Email was sent successfully")
 
 def render_news_block_tab():
@@ -70,5 +83,7 @@ def render_news_block_tab():
 
 if __name__ == '__main__':
     render_news_block_tab()
+    render_preview_tab()
     render_send_email_tab()
+
 
