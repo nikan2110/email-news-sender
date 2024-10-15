@@ -1,2 +1,9 @@
 [server]
 enableStaticServing = true
+
+#headless = true                 Run Streamlit in headless mode (no browser window will open automatically)
+#port = 8502                     # Specify the port to run the app on (default: 8501)
+#enableCORS = false              # Disable Cross-Origin Resource Sharing (CORS) protection
+#enableWebsocketCompression = false  # Disable WebSocket compression for lower latency in communications
+#baseUrlPath = "my-app"          # Set a custom base URL path for the app (default: "/")
+#externalIp = "0.0.0.0"          # Allow access from external IPs, such as for remote access to the app

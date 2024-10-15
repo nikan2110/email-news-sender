@@ -2,6 +2,13 @@ from db import fetch_main_page, fetch_pending_news
 
 
 def generate_main_page(main_page_content):
+    """
+    Generates the HTML structure for the main page of the email.
+
+    :param main_page_content: The content of the main page, which includes the title, date, and description.
+    :return: The HTML block for the main page as a string.
+    """
+
     main_page_block = f""" 
 <!DOCTYPE html>
 <html lang="he">
@@ -75,6 +82,13 @@ def generate_main_page(main_page_content):
 
 
 def generate_news_block_canvas(main_page_content):
+    """
+    Generates the base HTML structure for the news blocks of the email.
+
+    :param main_page_content: The content of the main page, which provides context for the news blocks.
+    :return: The base HTML block for the news blocks as a string.
+    """
+
     news_html_template = f"""
 <!DOCTYPE html>
 <html lang="he">
@@ -108,6 +122,13 @@ def generate_news_block_canvas(main_page_content):
 
 
 def generate_news_block_content(news_item):
+    """
+    Generates the HTML structure for an individual news block.
+
+    :param news_item: The news item containing title, description, and link.
+    :return: The HTML block for a single news item as a string.
+    """
+
     news_block = f"""
     <!-- News Block -->
     <tr>
@@ -149,6 +170,14 @@ def generate_news_block_content(news_item):
     return news_block
 
 def generate_news_block_html(news_items, main_page_content):
+    """
+    Generates the complete HTML structure for all news blocks, combining individual news block HTML.
+
+    :param news_items: List of news items to include in the email.
+    :param main_page_content: The content of the main page, providing context for the news blocks.
+    :return: The full HTML for the news blocks as a string.
+    """
+
     news_block_html_page = generate_news_block_canvas(main_page_content)
 
     for news_item in news_items:
@@ -164,6 +193,12 @@ def generate_news_block_html(news_items, main_page_content):
     return news_block_html_page
 
 def make_html_for_email():
+    """
+    Fetches the main page and news content from the database and generates HTML for the email.
+
+    :return: A tuple containing the main page content, main page HTML, and news block HTML.
+    """
+
     news_main_page = fetch_main_page()
     pending_news = fetch_pending_news()
 

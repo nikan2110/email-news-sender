@@ -2,6 +2,13 @@ from db import fetch_main_page, fetch_pending_news
 
 
 def generate_main_page_for_preview(main_page_content):
+    """
+    Generates the HTML structure for the main page preview, including header, title, date, and description.
+
+    :param main_page_content: The content of the main page, including title, date, and description.
+    :return: A string containing the HTML block for the main page.
+    """
+
     main_page_block = f""" 
 <!DOCTYPE html>
 <html lang="he">
@@ -75,6 +82,13 @@ def generate_main_page_for_preview(main_page_content):
     return main_page_block
 
 def generate_news_block_html_page_for_preview(main_page_content):
+    """
+    Generates the initial HTML structure for the news block preview, including the header.
+
+    :param main_page_content: The content of the main page to provide context for the news blocks.
+    :return: A string containing the base HTML for the news blocks.
+    """
+
     news_html_template = f"""
 <!DOCTYPE html>
 <html lang="he">
@@ -108,6 +122,13 @@ def generate_news_block_html_page_for_preview(main_page_content):
 
 
 def generate_news_block_for_preview(news_item):
+    """
+    Generates the HTML for an individual news block, including the title, description, and image.
+
+    :param news_item: The news item to be displayed in the email.
+    :return: A string containing the HTML for the news block.
+    """
+
     news_block = f"""
     <!-- News Block -->
     <tr>
@@ -149,6 +170,14 @@ def generate_news_block_for_preview(news_item):
     return news_block
 
 def generate_news_block_html_for_preview(news_items, main_page_content):
+    """
+    Combines the main page content and individual news blocks into a full HTML structure for preview.
+
+    :param news_items: List of news items to be included in the email.
+    :param main_page_content: The content of the main page.
+    :return: A string containing the full HTML structure for the news blocks preview.
+    """
+
     news_block_html_page = generate_news_block_html_page_for_preview(main_page_content)
 
     for news_item in news_items:
@@ -164,6 +193,12 @@ def generate_news_block_html_for_preview(news_items, main_page_content):
     return news_block_html_page
 
 def make_html_for_preview():
+    """
+    Fetches the main page and pending news items from the database, generates HTML for preview purposes.
+
+    :return: A string containing the full HTML for the email preview.
+    """
+
     news_main_page = fetch_main_page()
     pending_news = fetch_pending_news()
 
