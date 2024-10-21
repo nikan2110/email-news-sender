@@ -1,6 +1,10 @@
 import logging
 import os
+import time
+
 import streamlit as st
+from PIL import Image
+
 from constant import MAIN_PAGE_MODEL, NEWS_BLOCK_MODEL
 from db import fetch_pending_news, remove_news_block, add_news, update_news, get_next_id, fetch_main_page, \
     update_main_page, remove_main_page
@@ -14,6 +18,30 @@ st.set_page_config(page_title="Email Sender", layout="wide")
 (news_block_tab, main_page_tab,
  preview_tab, send_mail_tab) = st.tabs(["News block", "Main page", "Preview", "Send email"])
 
+def save_image_as_png(image, news_id):
+    """
+    Saves the uploaded image as a PNG with the name of the news ID.
+    """
+    output_path = get_image_path(news_id)
+    output_path = os.path.splitext(output_path)[0] + '.png'
+    img = Image.open(image)
+    img.save(output_path, format='PNG')
+    logging.info(f"Image saved as {output_path}")
+
+
+def delete_image(news_id):
+    """
+    Deletes the image associated with a specific news ID.
+    """
+    image_path = get_image_path(news_id)
+    image_path_png = os.path.splitext(image_path)[0] + '.png'
+    if os.path.exists(image_path_png):
+        os.remove(image_path_png)
+        logging.info(f"Image {image_path_png} deleted successfully")
+        st.success(f"Image for news ID {news_id} was successfully deleted.")
+    else:
+        st.warning(f"Image {image_path_png} not found, cannot delete")
+        logging.warning(f"Image {image_path_png} not found, skipping deletion")
 
 def render_preview_tab():
     """
@@ -52,6 +80,7 @@ def render_news_block_tab():
     """
     Renders the tab for adding, updating, and deleting news blocks.
     """
+
     with news_block_tab:
         logging.info("Rendering News Block Tab")
         st.header("Add new news")
@@ -91,12 +120,24 @@ def render_news_block_tab():
 
                 with image_column:
                     image_path = get_image_path(news.news_id)
+                    image_path_png = os.path.splitext(image_path)[0] + '.png'
 
-                    if os.path.exists(image_path):
-                        st.image(image_path, caption=f"News image ID {news.news_id}", use_column_width=True)
+                    if os.path.exists(image_path_png):
+                        st.image(image_path_png, caption=f"News image ID {news.news_id}", use_column_width=True)
+
+                        # Добавляем кнопку для удаления изображения
+                        if st.button(f"Delete image for news ID {news.news_id}", key=f"delete_image_{news.news_id}"):
+                            delete_image(news.news_id)
                     else:
                         st.warning(f"News image {news.news_id} does not exist")
                         logging.warning(f"Image not found for news ID {news.news_id}")
+                        uploaded_image = st.file_uploader(f"Upload image for news ID {news.news_id}",
+                                                          type=["jpg", "jpeg", "png"], key=f"upload_{news.news_id}")
+
+                        if uploaded_image is not None:
+                            save_image_as_png(uploaded_image, news.news_id)
+                            st.success(f"Image for news ID {news.news_id} uploaded successfully")
+                            st.cache_data.clear()
 
                 save_button_col, delete_button_col = st.columns(2)
 
@@ -108,12 +149,12 @@ def render_news_block_tab():
                         logging.info(f"Changes for news ID {news.news_id} saved successfully")
 
                 with delete_button_col:
-                    if st.button(f"Delete news ID {news.news_id}", key=f"delete_{news.news_id}"):
+                    if st.button(f"Delete news ID {news.news_id}", key=f"delete_{news.news_id}", type='primary'):
                         logging.info(f"Deleting news ID: {news.news_id}")
                         remove_news_block(news)
+                        delete_image(news.news_id)  # Удаляем картинку вместе с новостью
                         st.success(f"News ID {news.news_id} was successfully deleted.")
                         logging.info(f"News ID {news.news_id} deleted successfully")
-
 
 def render_main_page_tab():
     """
