@@ -3,12 +3,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-smtp_server = "smtp.gmail.com"
-smtp_port = 587
-smtp_user = "nikan2110isr@gmail.com"
-smtp_password = os.getenv('SMTP_PASSWORD')
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+SMTP_USER = "nikan2110isr@gmail.com"
+SMTP_PASSWORD = os.getenv('SMTP_PASSWORD')
 
-postgres_password = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 
 IMAGE_FOLDER_NEWS = "static/news_images"
 

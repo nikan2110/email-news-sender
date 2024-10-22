@@ -1,10 +1,11 @@
 import logging
 import os
+import smtplib
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from config import server
-from constant import smtp_user, smtp_password
+from constant import SMTP_USER, SMTP_PASSWORD, SMTP_SERVER, SMTP_PORT
 from db import *
 import psycopg2
 from html_builder_email_main import make_html_for_email
@@ -75,13 +76,6 @@ def add_header_and_footer_images_to_main_page(msg):
 
 
 def send_email(main_page_html, html_content):
-    """
-    Sends the email with main page and news block content.
-
-    :param main_page_html: HTML content for the main page.
-    :param html_content: HTML content for the news blocks.
-    :return: List of news IDs for the news blocks in the email.
-    """
     logging.info("Preparing to send email")
 
     full_email_html = f"""{main_page_html}{html_content}"""
@@ -89,7 +83,7 @@ def send_email(main_page_html, html_content):
 
     msg = MIMEMultipart()
     msg['Subject'] = "Week news"
-    msg['From'] = smtp_user
+    msg['From'] = SMTP_USER
     msg['To'] = get_recipients_list()
 
     msg.attach(html_content_attachment)
@@ -100,18 +94,28 @@ def send_email(main_page_html, html_content):
 
     try:
         logging.info("Starting email server and sending email")
+        if not server:
+            logging.info("Reconnecting to the email server")
+            server.connect(SMTP_SERVER, SMTP_PORT)  # Подставьте свой SMTP-сервер
+
         server.starttls()
-        server.login(smtp_user, smtp_password)
+        server.login(SMTP_USER, SMTP_PASSWORD)
         server.send_message(msg)
+
         logging.info("Email sent successfully")
+    except smtplib.SMTPServerDisconnected:
+        logging.exception("SMTP server disconnected, trying to reconnect")
+
+        server.connect(SMTP_SERVER, SMTP_PORT)  # Подставьте свой SMTP-сервер
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASSWORD)
+        server.send_message(msg)
     except Exception as e:
         logging.exception("Error while sending email")
         raise e
     finally:
         server.quit()
-
-    return news_ids
-
+        return news_ids
 
 def get_recipients_list():
     """
