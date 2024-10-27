@@ -1,5 +1,5 @@
 import os
-from constant import IMAGE_FOLDER_NEWS
+from constants import IMAGE_FOLDER_NEWS
 
 def get_image_path(news_id):
     """

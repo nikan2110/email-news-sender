@@ -5,7 +5,7 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from config import server
-from constant import SMTP_USER, SMTP_PASSWORD, SMTP_SERVER, SMTP_PORT
+from constants import SMTP_USER, SMTP_PASSWORD, SMTP_SERVER, SMTP_PORT
 from db import *
 import psycopg2
 from html_builder_email_main import make_html_for_email

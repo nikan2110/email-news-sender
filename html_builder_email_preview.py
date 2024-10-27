@@ -1,3 +1,4 @@
+from constants import IMAGE_PREVIEW_PATH
 from db import fetch_main_page, fetch_pending_news
 
 
@@ -25,7 +26,7 @@ def generate_main_page_for_preview(main_page_content):
         <!-- Header Image -->
         <tr>
             <td style="text-align: center;">
-                <img src="http://localhost:8501/app/static/basic_images/header_main_page.jpg" 
+                <img src="{IMAGE_PREVIEW_PATH}/basic_images/header_main_page.jpg" 
                 alt="Header Image" width="600" style="display: block;">
             </td>
         </tr>
@@ -64,7 +65,7 @@ def generate_main_page_for_preview(main_page_content):
                     <tr>
                         <!-- Pomegranate Image on the Left -->
                         <td width="100" style="text-align: left;">
-                            <img src="http://localhost:8501/app/static/basic_images/footer_main_page.png" alt="Footer Image" width="100" style="display: block;">
+                            <img src="{IMAGE_PREVIEW_PATH}/basic_images/footer_main_page.png" alt="Footer Image" width="100" style="display: block;">
                         </td>
                         <!-- Signature on the Right -->
                         <td style="text-align: right; direction: rtl; font-size: 14px; color: #7a2e2e;">
@@ -107,7 +108,7 @@ def generate_news_block_html_page_for_preview(main_page_content):
         <!-- Header Image -->
         <tr>
             <td style="text-align: center;">
-                <img src="http://localhost:8501/app/static/basic_images/header.jpg" alt="Header Image" width="600" style="display: block;">
+                <img src="{IMAGE_PREVIEW_PATH}/basic_images/header.jpg" alt="Header Image" width="600" style="display: block;">
             </td>
         </tr>
 
@@ -138,7 +139,7 @@ def generate_news_block_for_preview(news_item):
                     <!-- Right image -->
                     <td width="220" style="text-align: right;">
                     <a href="{news_item.news_link}" target="_blank">
-                        <img src="http://localhost:8501/app/static/news_images/{news_item.news_id}.png" alt="News Image" width="228" 
+                        <img src="{IMAGE_PREVIEW_PATH}/news_images/{news_item.news_id}.png" alt="News Image" width="228" 
                         style="display: block; border-radius: 5px;">
                     </a>
                     </td>

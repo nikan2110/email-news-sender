@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import smtplib
 
-from constant import SMTP_SERVER, SMTP_PORT, POSTGRES_PASSWORD
+from constants import SMTP_SERVER, SMTP_PORT, POSTGRES_PASSWORD
 
 DATABASE_URL = f"postgresql://postgres:{POSTGRES_PASSWORD}@localhost:5432/postgres"
 

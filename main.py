@@ -5,7 +5,7 @@ import time
 import streamlit as st
 from PIL import Image
 
-from constant import MAIN_PAGE_MODEL, NEWS_BLOCK_MODEL
+from constants import MAIN_PAGE_MODEL, NEWS_BLOCK_MODEL
 from db import fetch_pending_news, remove_news_block, add_news, update_news, get_next_id, fetch_main_page, \
     update_main_page, remove_main_page
 from email_sender import send_news
