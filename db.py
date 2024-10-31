@@ -1,6 +1,5 @@
-import logging
 from sqlalchemy import func
-from config import Session
+from config import Session, logging
 from model import News, NewsMainPage, Recipients
 
 

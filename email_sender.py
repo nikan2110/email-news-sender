@@ -1,14 +1,14 @@
-import logging
 import os
 import smtplib
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from config import server
+from config import logging
 from constants import SMTP_USER, SMTP_PASSWORD, SMTP_SERVER, SMTP_PORT
-from db import *
 import psycopg2
+from db import fetch_all_recipients, update_news_main_page_status, update_news_block_status
 from html_builder_email_main import make_html_for_email
+
 
 
 def add_header_and_news_images_to_news_block(msg):
@@ -94,9 +94,7 @@ def send_email(main_page_html, html_content):
 
     try:
         logging.info("Starting email server and sending email")
-        if not server:
-            logging.info("Reconnecting to the email server")
-            server.connect(SMTP_SERVER, SMTP_PORT)  # Подставьте свой SMTP-сервер
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
 
         server.starttls()
         server.login(SMTP_USER, SMTP_PASSWORD)
@@ -106,10 +104,11 @@ def send_email(main_page_html, html_content):
     except smtplib.SMTPServerDisconnected:
         logging.exception("SMTP server disconnected, trying to reconnect")
 
-        server.connect(SMTP_SERVER, SMTP_PORT)  # Подставьте свой SMTP-сервер
+        server.connect(SMTP_SERVER, SMTP_PORT)
         server.starttls()
         server.login(SMTP_USER, SMTP_PASSWORD)
         server.send_message(msg)
+
     except Exception as e:
         logging.exception("Error while sending email")
         raise e
@@ -143,8 +142,8 @@ def send_news():
 
         news_ids = send_email(main_page_html, news_block_html)
 
-        # update_news_main_page_status(main_page_content.main_page_news_id)
-        # update_news_block_status(news_ids)
+        update_news_main_page_status(main_page_content.main_page_news_id)
+        update_news_block_status(news_ids)
 
         logging.info("Email sent and status updated successfully")
     except Exception as error:

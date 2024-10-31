@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, Date
-from config import Base
+from sqlalchemy.ext.declarative import declarative_base
 
+Base = declarative_base()
 
 class News(Base):
     """

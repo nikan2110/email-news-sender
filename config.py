@@ -1,20 +1,26 @@
-import logging
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import smtplib
-
-from constants import SMTP_SERVER, SMTP_PORT, POSTGRES_PASSWORD
+from constants import POSTGRES_PASSWORD
+import logging as log
 
 DATABASE_URL = f"postgresql://postgres:{POSTGRES_PASSWORD}@localhost:5432/postgres"
-
-Base = declarative_base()
 
 engine = create_engine(DATABASE_URL)
 
 Session = sessionmaker(bind=engine)
 
-server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+logging = log.getLogger("email_sender")
 
-logging.basicConfig(format='%(levelname)s : %(asctime)s : %(message)s ', level=logging.INFO,
-                    handlers=[logging.StreamHandler(), logging.FileHandler("logs.txt", 'w+')])
+if not logging.hasHandlers():
+    logging.setLevel(log.INFO)
+
+    handler_console = log.StreamHandler()
+    handler_file = log.FileHandler("logs.txt", 'w')
+
+    formatter = log.Formatter('%(levelname)s : %(asctime)s : %(message)s')
+
+    handler_console.setFormatter(formatter)
+    handler_file.setFormatter(formatter)
+
+    logging.addHandler(handler_console)
+    logging.addHandler(handler_file)
