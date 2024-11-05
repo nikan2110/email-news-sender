@@ -141,7 +141,12 @@ def generate_news_block_content(news_item):
                         <img src="cid:news_image_{news_item.news_id}" alt="News Image" width="228" 
                         style="display: block; border-radius: 5px;">
                     </a>
+                    
+                                                            <!-- Link below the image -->
+                    <p style="text-align: center; margin: 5px 0;"><a href="{news_item.news_link}" 
+                    target="_blank" style="color: #7a2e2e; text-decoration: none;"> ⬅️ לחץ פה </a></p>
                     </td>
+                    
 
                     <!-- Spacer -->
                     <td width="20">

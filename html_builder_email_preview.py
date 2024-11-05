@@ -10,6 +10,8 @@ def generate_main_page_for_preview(main_page_content):
     :return: A string containing the HTML block for the main page.
     """
 
+    formatted_description = main_page_content.description.replace("\n", "<br>")
+
     main_page_block = f""" 
 <!DOCTYPE html>
 <html lang="he">
@@ -54,7 +56,7 @@ def generate_main_page_for_preview(main_page_content):
         <tr>
             <td style="padding: 20px; background-color: #fafafa; text-align: right; direction: rtl; color: #333333; 
             font-size: 15px; line-height: 2;">
-                {main_page_content.description}
+                {formatted_description}
             </td>
         </tr>
 
@@ -142,6 +144,9 @@ def generate_news_block_for_preview(news_item):
                         <img src="{IMAGE_PREVIEW_PATH}/news_images/{news_item.news_id}.png" alt="News Image" width="228" 
                         style="display: block; border-radius: 5px;">
                     </a>
+                                        <!-- Link below the image -->
+                    <p style="text-align: center; margin: 5px 0; font-size:12px"><a href="{news_item.news_link}" 
+                    target="_blank" style="color: #7a2e2e; text-decoration: none;">  ⬅️ לחץ פה </a></p>
                     </td>
 
                     <!-- Spacer -->
