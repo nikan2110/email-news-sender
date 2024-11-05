@@ -1,11 +1,13 @@
+import logging
 import os
+import time
+
 import streamlit as st
 from PIL import Image
 
-from config import logging
-from constants import MAIN_PAGE_MODEL, NEWS_BLOCK_MODEL
+from constants import NEWS_BLOCK_MODEL, MAIN_PAGE_MODEL
 from db import fetch_pending_news, remove_news_block, add_news, update_news, get_next_id, fetch_main_page, \
-    update_main_page, remove_main_page
+    update_main_page, remove_main_page, move_news_up, move_news_down, get_next_sort_order
 from email_sender import send_news
 from html_builder_email_preview import make_html_for_preview
 from model import News, NewsMainPage
@@ -15,6 +17,7 @@ st.set_page_config(page_title="Email Sender", layout="wide")
 
 (news_block_tab, main_page_tab,
  preview_tab, send_mail_tab) = st.tabs(["News block", "Main page", "Preview", "Send email"])
+
 
 def save_image_as_png(image, news_id):
     """
@@ -40,6 +43,7 @@ def delete_image(news_id):
     else:
         st.warning(f"Image {image_path_png} not found, cannot delete")
         logging.warning(f"Image {image_path_png} not found, skipping deletion")
+
 
 def render_preview_tab():
     """
@@ -89,18 +93,18 @@ def render_news_block_tab():
         new_news_title = st.text_input("News title", key="new_news_title")
         new_news_description = st.text_area("News description", key="new_news_description")
         news_link = st.text_input("News link", key="new_news_link")
+        news_sort_order = get_next_sort_order()
 
         if st.button("Add new news", key="add_news"):
             logging.info(f"Adding news with ID: {new_news_id}")
             new_news = News(news_id=new_news_id, title=new_news_title, description=new_news_description,
-                            news_link=news_link, is_send=False)
+                            news_link=news_link, is_send=False, sort_order=news_sort_order)
             add_news(new_news)
             st.success("News added successfully")
             logging.info(f"News with ID: {new_news_id} added successfully")
 
         news_blocks = fetch_pending_news()
         logging.info(f"Fetched {len(news_blocks)} pending news blocks")
-        news_blocks.sort(key=lambda x: x.news_id)
 
         if not news_blocks:
             st.write("There are no news for sending")
@@ -108,7 +112,7 @@ def render_news_block_tab():
             for news in news_blocks:
                 st.subheader(f"News ID: {news.news_id}")
 
-                image_column, title_description_link_column = st.columns([1, 2])
+                image_column, title_description_link_column, order_column = st.columns([1, 2, 1])
 
                 with title_description_link_column:
                     title = st.text_input(f"News title ID {news.news_id}", news.title, key=f"title_{news.news_id}")
@@ -123,9 +127,9 @@ def render_news_block_tab():
                     if os.path.exists(image_path_png):
                         st.image(image_path_png, caption=f"News image ID {news.news_id}", use_column_width=True)
 
-                        # Добавляем кнопку для удаления изображения
                         if st.button(f"Delete image for news ID {news.news_id}", key=f"delete_image_{news.news_id}"):
                             delete_image(news.news_id)
+                            st.rerun()
                     else:
                         st.warning(f"News image {news.news_id} does not exist")
                         logging.warning(f"Image not found for news ID {news.news_id}")
@@ -136,23 +140,34 @@ def render_news_block_tab():
                             save_image_as_png(uploaded_image, news.news_id)
                             st.success(f"Image for news ID {news.news_id} uploaded successfully")
                             st.cache_data.clear()
+                            st.rerun()
+
+                with order_column:
+                    if st.button("⬆️", key=f"up_{news.news_id}"):
+                        move_news_up(news.news_id)
+                        st.rerun()
+                    if st.button("⬇️", key=f"down_{news.news_id}"):
+                        move_news_down(news.news_id)
+                        st.rerun()
 
                 save_button_col, delete_button_col = st.columns(2)
-
                 with save_button_col:
                     if st.button(f"Save changes for news ID {news.news_id}", key=f"save_{news.news_id}"):
                         logging.info(f"Saving changes for news ID: {news.news_id}")
                         update_news(news.news_id, title, description, link)
                         st.success(f"Changes for news ID {news.news_id} were successfully saved.")
+                        st.rerun()
                         logging.info(f"Changes for news ID {news.news_id} saved successfully")
 
                 with delete_button_col:
                     if st.button(f"Delete news ID {news.news_id}", key=f"delete_{news.news_id}", type='primary'):
                         logging.info(f"Deleting news ID: {news.news_id}")
                         remove_news_block(news)
-                        delete_image(news.news_id)  # Удаляем картинку вместе с новостью
+                        delete_image(news.news_id)
                         st.success(f"News ID {news.news_id} was successfully deleted.")
+                        st.rerun()
                         logging.info(f"News ID {news.news_id} deleted successfully")
+
 
 def render_main_page_tab():
     """

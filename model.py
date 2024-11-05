@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, Date
-from sqlalchemy.ext.declarative import declarative_base
+from config import Base
 
-Base = declarative_base()
 
 class News(Base):
     """
@@ -17,11 +16,12 @@ class News(Base):
 
     __tablename__ = 'news_block'
 
-    news_id = Column(Integer, primary_key=True)
+    news_id = Column(Integer, primary_key=True, autoincrement=False)
     title = Column(String)
     description = Column(String)
     is_send = Column(Boolean, default=False)
     news_link = Column(String)
+    sort_order = Column(Integer)
 
     def __repr__(self):
         return f"<News(" \
@@ -45,7 +45,7 @@ class NewsMainPage(Base):
 
     __tablename__ = 'news_main_page'
 
-    main_page_news_id = Column(Integer, primary_key=True)
+    main_page_news_id = Column(Integer, primary_key=True, autoincrement=False)
     news_date = Column(Date)
     title = Column(String)
     description = Column(String)
@@ -58,6 +58,7 @@ class NewsMainPage(Base):
                f"sent={self.is_send}, " \
                f"news_date={self.news_date}, " \
                f")>"
+
 
 class Recipients(Base):
     """
@@ -73,4 +74,3 @@ class Recipients(Base):
 
     def __repr__(self):
         return f"<Recipient(Recipient={self.recipient})"
-

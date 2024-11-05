@@ -1,5 +1,6 @@
+import logging
 from sqlalchemy import func
-from config import Session, logging
+from config import Session
 from model import News, NewsMainPage, Recipients
 
 
@@ -43,6 +44,38 @@ def add_main_page(main_page):
         session.close()
 
 
+def move_news_up(news_id):
+    session = Session()
+    try:
+        current_news = session.query(News).filter(News.news_id == news_id).first()
+        if current_news:
+            above_news = session.query(News) \
+                .filter(News.sort_order < current_news.sort_order).order_by(News.sort_order.desc()).first()
+            if above_news:
+                current_news.sort_order, above_news.sort_order = above_news.sort_order, current_news.sort_order
+                session.commit()
+    except Exception as e:
+        logging.exception("Failed to fetch pending news")
+    finally:
+        session.close()
+
+
+def move_news_down(news_id):
+    session = Session()
+    try:
+        current_news = session.query(News).filter(News.news_id == news_id).first()
+        if current_news:
+            below_news = session.query(News).filter(News.sort_order > current_news.sort_order).order_by(
+                News.sort_order.asc()).first()
+            if below_news:
+                current_news.sort_order, below_news.sort_order = below_news.sort_order, current_news.sort_order
+                session.commit()
+    except Exception as e:
+        logging.exception("Failed to fetch pending news")
+    finally:
+        session.close()
+
+
 def fetch_pending_news():
     """
     Fetches all news that have not been sent yet.
@@ -52,7 +85,7 @@ def fetch_pending_news():
     session = Session()
     try:
         logging.info("Fetching pending news")
-        return session.query(News).filter_by(is_send=False).all()
+        return session.query(News).filter_by(is_send=False).order_by(News.sort_order).all()
     except Exception as e:
         logging.exception("Failed to fetch pending news")
     finally:
@@ -174,6 +207,22 @@ def get_next_id(model_type):
             return 1
         else:
             return max_id + 1
+    except Exception as e:
+        logging.exception("Failed to get next ID")
+    finally:
+        session.close()
+
+
+def get_next_sort_order():
+    session = Session()
+    max_sort_order = None
+    try:
+        max_sort_order = session.query(func.max(News.sort_order)).scalar()
+
+        if max_sort_order is None:
+            return 1
+        else:
+            return max_sort_order + 1
     except Exception as e:
         logging.exception("Failed to get next ID")
     finally:
