@@ -1,6 +1,5 @@
 import logging
 import os
-import time
 
 import streamlit as st
 from PIL import Image
@@ -156,8 +155,9 @@ def render_news_block_tab():
                         logging.info(f"Saving changes for news ID: {news.news_id}")
                         update_news(news.news_id, title, description, link)
                         st.success(f"Changes for news ID {news.news_id} were successfully saved.")
-                        st.rerun()
                         logging.info(f"Changes for news ID {news.news_id} saved successfully")
+                        st.rerun()
+
 
                 with delete_button_col:
                     if st.button(f"Delete news ID {news.news_id}", key=f"delete_{news.news_id}", type='primary'):
@@ -165,8 +165,9 @@ def render_news_block_tab():
                         remove_news_block(news)
                         delete_image(news.news_id)
                         st.success(f"News ID {news.news_id} was successfully deleted.")
-                        st.rerun()
                         logging.info(f"News ID {news.news_id} deleted successfully")
+                        st.rerun()
+
 
 
 def render_main_page_tab():

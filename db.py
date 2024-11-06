@@ -45,6 +45,11 @@ def add_main_page(main_page):
 
 
 def move_news_up(news_id):
+    """
+    Moves the news item with the given ID up in the sort order.
+
+    :param news_id: The ID of the news item to move up.
+    """
     session = Session()
     try:
         current_news = session.query(News).filter(News.news_id == news_id).first()
@@ -61,6 +66,11 @@ def move_news_up(news_id):
 
 
 def move_news_down(news_id):
+    """
+    Moves the news item with the given ID down in the sort order.
+
+    :param news_id: The ID of the news item to move down.
+    """
     session = Session()
     try:
         current_news = session.query(News).filter(News.news_id == news_id).first()
@@ -214,6 +224,11 @@ def get_next_id(model_type):
 
 
 def get_next_sort_order():
+    """
+        Gets the next available sort order value for a new news item.
+
+        :return: The next sort order value as an integer.
+        """
     session = Session()
     max_sort_order = None
     try:
