@@ -20,3 +20,11 @@ MAIN_PAGE_MODEL = "main_page"
 
 NEWS_BLOCK_MODEL = "news_block"
 
+FONT_FAMILY_MAIN_PAGE = "font-family: Arial, Helvetica, sans-serif;"
+
+LINE_HEIGHT_MAIN_PAGE = "line-height: 1.5;"
+
+FONT_FAMILY_NEWS_BLOCK = "font-family: Arial, Helvetica, sans-serif;"
+
+LINE_HEIGHT_NEWS_BLOCK = "line-height: 1.5;"
+
