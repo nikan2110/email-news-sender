@@ -71,7 +71,7 @@ def generate_main_page_for_preview(main_page_content):
                         </td>
                         <!-- Signature on the Right -->
                         <td style="text-align: right; direction: rtl; font-size: 14px; color: #7a2e2e;">
-                            <span>רות אליעזר<br>מנהלת מחלקת BI</span>
+                            <span></span>
                         </td>
                     </tr>
                 </table>
@@ -117,7 +117,7 @@ def generate_news_block_html_page_for_preview(main_page_content):
         <!-- Title -->
         <tr>
             <td align="right" dir="rtl" style="padding: 20px; background-color: #7a2e2e; color: white;">
-                <h1 style="margin: 0; font-size: 26px;">פרדס רימונים: {main_page_content.title}</h1>
+                <h1 style="margin: 0; font-size: 26px;">{main_page_content.title}</h1>
             </td>
         </tr>
 """

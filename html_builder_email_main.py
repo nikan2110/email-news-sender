@@ -8,6 +8,7 @@ def generate_main_page(main_page_content):
     :param main_page_content: The content of the main page, which includes the title, date, and description.
     :return: The HTML block for the main page as a string.
     """
+    formatted_description = main_page_content.description.replace("\n", "<br>")
 
     main_page_block = f""" 
 <!DOCTYPE html>
@@ -52,7 +53,7 @@ def generate_main_page(main_page_content):
         <tr>
             <td style="padding: 20px; background-color: #fafafa; text-align: right; direction: rtl; color: #333333; 
             font-size: 15px; line-height: 2;">
-                {main_page_content.description}
+                {formatted_description}
             </td>
         </tr>
 
@@ -67,7 +68,7 @@ def generate_main_page(main_page_content):
                         </td>
                         <!-- Signature on the Right -->
                         <td style="text-align: right; direction: rtl; font-size: 14px; color: #7a2e2e;">
-                            <span>רות אליעזר<br>מנהלת מחלקת BI</span>
+                            <span></span>
                         </td>
                     </tr>
                 </table>
@@ -114,7 +115,7 @@ def generate_news_block_canvas(main_page_content):
         <!-- Title -->
         <tr>
             <td align="right" dir="rtl" style="padding: 20px; background-color: #7a2e2e; color: white;">
-                <h1 style="margin: 0; font-size: 26px;">פרדס רימונים: {main_page_content.title}</h1>
+                <h1 style="margin: 0; font-size: 26px;">{main_page_content.title}</h1>
             </td>
         </tr>
 """

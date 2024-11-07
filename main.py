@@ -6,7 +6,7 @@ from PIL import Image
 
 from constants import NEWS_BLOCK_MODEL, MAIN_PAGE_MODEL
 from db import fetch_pending_news, remove_news_block, add_news, update_news, get_next_id, fetch_main_page, \
-    update_main_page, remove_main_page, move_news_up, move_news_down, get_next_sort_order
+    update_main_page, remove_main_page, move_news_up, move_news_down, get_next_sort_order, fetch_main_pages_with_history
 from email_sender import send_news
 from html_builder_email_preview import make_html_for_preview
 from model import News, NewsMainPage
@@ -15,7 +15,7 @@ from tools import get_image_path
 st.set_page_config(page_title="Email Sender", layout="wide")
 
 (news_block_tab, main_page_tab,
- preview_tab, send_mail_tab) = st.tabs(["News block", "Main page", "Preview", "Send email"])
+ preview_tab, send_mail_tab, history_tab) = st.tabs(["News block", "Main page", "Preview", "Send email", "History"])
 
 
 def save_image_as_png(image, news_id):
@@ -230,10 +230,28 @@ def render_main_page_tab():
                     logging.info(f"Main page ID {main_page.main_page_news_id} deleted successfully")
 
 
+def render_history_tab():
+    with history_tab:
+        st.header("History Tab")
+
+        main_pages = fetch_main_pages_with_history()
+        if not main_pages:
+            st.write("History is empty")
+
+        for main_page in main_pages:
+            if main_page.history_link:
+                file_date = main_page.news_date.strftime("%m/%d/%Y")
+                file_link = main_page.history_link
+
+                st.markdown(f"[Email from {file_date}] - ({file_link})", unsafe_allow_html=True)
+
+
+
 if __name__ == '__main__':
     logging.info("Starting Email Sender Application")
     render_news_block_tab()
     render_main_page_tab()
     render_preview_tab()
     render_send_email_tab()
+    render_history_tab()
     logging.info("Email Sender Application rendered successfully")

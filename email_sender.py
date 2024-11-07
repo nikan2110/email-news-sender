@@ -4,11 +4,12 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from config import logging
-from constants import SMTP_USER, SMTP_PASSWORD, SMTP_SERVER, SMTP_PORT
+from constants import SMTP_USER, SMTP_PASSWORD, SMTP_SERVER, SMTP_PORT, EMAIL_HISTORY_PATH
 import psycopg2
-from db import fetch_all_recipients, update_news_main_page_status, update_news_block_status
+from db import fetch_all_recipients, update_news_main_page_status, update_news_block_status, \
+    add_email_html_link_to_main_page
 from html_builder_email_main import make_html_for_email
-
+from html_builder_email_preview import make_html_for_preview
 
 
 def add_header_and_news_images_to_news_block(msg):
@@ -76,6 +77,25 @@ def add_header_and_footer_images_to_main_page(msg):
 
 
 def send_email(main_page_html, html_content):
+    """
+    Sends an email with the main page and news block content.
+
+    Parameters:
+    - main_page_html (str): HTML content of the main page to be included in the email.
+    - html_content (str): HTML content of the news block to be included in the email.
+
+    Returns:
+    - list: A list of news IDs (news_ids) included in the email.
+
+    Exceptions:
+    - Raises an exception if there is an error while sending the email.
+
+    Description:
+    This function creates the full HTML content of the email by combining the main page and news block.
+    It also attaches header and footer images to the main page and images for each news block.
+    The function connects to the SMTP server, sends the email, and then closes the connection.
+    In case of a disconnection, it attempts to reconnect and resend the email.
+    """
     logging.info("Preparing to send email")
 
     full_email_html = f"""{main_page_html}{html_content}"""
@@ -130,6 +150,21 @@ def get_recipients_list():
     return recipients_string
 
 
+def save_email_history(main_page_id, main_page_date):
+
+    history_folder = 'email_history'
+    html_for_saving = make_html_for_preview()
+
+    file_name = f"email_{main_page_date}.html"
+    file_path = os.path.join(history_folder, file_name)
+
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(html_for_saving)
+
+    email_history_link = f"{EMAIL_HISTORY_PATH}/{file_name}"
+
+    add_email_html_link_to_main_page(main_page_id,email_history_link)
+
 def send_news():
     """
     Generates the main page and news block HTML content, then sends the email.
@@ -142,8 +177,11 @@ def send_news():
 
         news_ids = send_email(main_page_html, news_block_html)
 
-        update_news_main_page_status(main_page_content.main_page_news_id)
-        update_news_block_status(news_ids)
+        # update_news_main_page_status(main_page_content.main_page_news_id)
+        # update_news_block_status(news_ids)
+
+        save_email_history(main_page_content.main_page_news_id,main_page_content.news_date)
+
 
         logging.info("Email sent and status updated successfully")
     except Exception as error:

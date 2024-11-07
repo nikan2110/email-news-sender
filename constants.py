@@ -14,6 +14,8 @@ IMAGE_FOLDER_NEWS = "static/news_images"
 
 IMAGE_PREVIEW_PATH = "http://localhost:8501/app/static"
 
+EMAIL_HISTORY_PATH = "http://localhost:8501/email_history"
+
 MAIN_PAGE_MODEL = "main_page"
 
 NEWS_BLOCK_MODEL = "news_block"

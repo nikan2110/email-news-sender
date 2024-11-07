@@ -50,6 +50,7 @@ class NewsMainPage(Base):
     title = Column(String)
     description = Column(String)
     is_send = Column(Boolean, default=False)
+    history_link = Column(String)
 
     def __repr__(self):
         return f"<News(" \

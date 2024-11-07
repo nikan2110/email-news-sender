@@ -43,6 +43,21 @@ def add_main_page(main_page):
     finally:
         session.close()
 
+def add_email_html_link_to_main_page(main_page_news_id, email_html_link):
+    session = Session()
+    try:
+        logging.info(f"Adding email html link for main page ID: {main_page_news_id}")
+        session.query(NewsMainPage).filter(NewsMainPage.main_page_news_id == main_page_news_id).update(
+            {"history_link": email_html_link})
+        session.commit()
+        logging.info("Link was added successfully")
+    except Exception as e:
+        session.rollback()
+        logging.exception("Failed to add link")
+        raise e
+    finally:
+        session.close()
+
 
 def move_news_up(news_id):
     """
@@ -112,6 +127,14 @@ def fetch_main_page():
     try:
         logging.info("Fetching main page")
         return session.query(NewsMainPage).filter_by(is_send=False).all()
+    finally:
+        session.close()
+
+def fetch_main_pages_with_history():
+    session = Session()
+    try:
+        logging.info("Fetching main page")
+        return session.query(NewsMainPage).filter(NewsMainPage.history_link.isnot(None)).all()
     finally:
         session.close()
 
@@ -230,7 +253,6 @@ def get_next_sort_order():
         :return: The next sort order value as an integer.
         """
     session = Session()
-    max_sort_order = None
     try:
         max_sort_order = session.query(func.max(News.sort_order)).scalar()
 
