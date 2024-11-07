@@ -29,6 +29,18 @@ def add_header_and_news_images_to_news_block(msg):
             mime_img.add_header('Content-Disposition', 'inline', filename="header")
             msg.attach(mime_img)
 
+        with open("static/basic_images/arrow.png", 'rb') as img:
+            mime_img = MIMEImage(img.read())
+            mime_img.add_header('Content-ID', '<arrow_image>')
+            mime_img.add_header('Content-Disposition', 'inline', filename="header")
+            msg.attach(mime_img)
+
+        with open("static/basic_images/icon.png", 'rb') as img:
+            mime_img = MIMEImage(img.read())
+            mime_img.add_header('Content-ID', '<icon>')
+            mime_img.add_header('Content-Disposition', 'inline', filename="header")
+            msg.attach(mime_img)
+
         for image_name in os.listdir("static/news_images"):
             if image_name.endswith('.png'):
                 image_path = os.path.join("static/news_images", image_name)
@@ -152,7 +164,7 @@ def get_recipients_list():
 
 def save_email_history(main_page_id, main_page_date):
 
-    history_folder = 'email_history'
+    history_folder = 'static/email_history'
     html_for_saving = make_html_for_preview()
 
     file_name = f"email_{main_page_date}.html"

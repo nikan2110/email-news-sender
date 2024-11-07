@@ -195,3 +195,4 @@ static/basic_images/*.jpg
 *.sql
 db_scripts
 logs.txt
+*.html

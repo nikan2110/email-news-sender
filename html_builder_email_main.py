@@ -122,6 +122,7 @@ def generate_news_block_canvas(main_page_content):
     return news_html_template
 
 
+
 def generate_news_block_content(news_item):
     """
     Generates the HTML structure for an individual news block.
@@ -131,35 +132,74 @@ def generate_news_block_content(news_item):
     """
 
     news_block = f"""
-    <!-- News Block -->
+                            
+    
+ <!-- News Block -->
     <tr>
-        <td style="padding: 10px; background-color: #fcefe3; direction: rtl; text-align: right;">
+        <td style="padding: 10px; background-color: #ffffff; direction: rtl; text-align: right;">
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center">
                 <tr>
-                    <!-- Right image -->
-                    <td width="220" style="text-align: right;">
-                    <a href="{news_item.news_link}" target="_blank">
-                        <img src="cid:news_image_{news_item.news_id}" alt="News Image" width="228" 
-                        style="display: block; border-radius: 5px;">
-                    </a>
-                    
-                                                            <!-- Link below the image -->
-                    <p style="text-align: center; margin: 5px 0;"><a href="{news_item.news_link}" 
-                    target="_blank" style="color: #7a2e2e; text-decoration: none;"> ⬅️ לחץ פה </a></p>
+                    <!-- Right image with icon in the bottom right corner -->
+                    <td width="220" style="text-align: right; vertical-align: top; ">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="228" style="position: relative;">
+                            <tr>
+                                <td style="position: relative;">
+                                    <!-- Основное изображение -->
+                                    <a href="{news_item.news_link}" target="_blank">
+                                        <img src="cid:news_image_{news_item.news_id}" alt="News Image" width="228" 
+                                             alt="News Image" width="228" style="display: block; border-radius: 5px;">
+                                    </a>
+                                    <!-- Значок с белым фоном в правом нижнем углу изображения -->
+    <div style="position: absolute; bottom: -1px; right: 5px; width: 45px; height: 45px; 
+            background-color: #ffffff; border-radius: 35px; display: flex; align-items: center; justify-content: center;">
+    <img src="cid:icon" 
+         alt="Security Icon" width="70" height="70" style="border-radius: 35px;">
+    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
-                    
 
                     <!-- Spacer -->
                     <td width="20">
                         &nbsp;
                     </td>
 
-                    <!-- Left content (Text in Hebrew) -->
-                    <td width="328" style="direction: rtl; text-align: right;">
-                        <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;">{news_item.title}</h2>
+                    <!-- Left content (Text in Hebrew) with icon -->
+                    <td width="328" style="direction: rtl; text-align: right; vertical-align: top;">
+                        <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;">
+                            {news_item.title}
+                        </h2>
                         <p style="color: #555555; font-size: 16px; direction: rtl; margin: 0;">
-                        {news_item.description}
+                            {news_item.description}
                         </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    
+    <!-- Footer with custom styling -->
+    <tr>
+        <td style="padding: 0; text-align: center;">
+            <!-- White rounded top part -->
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                    <td style="background-color: #ffffff; border-radius: 15px 15px 0 0; padding: 10px; 
+                    text-align: left;">
+                    <a href="{news_item.news_link}" target="_blank" style="text-decoration: none;">
+                        <img src="cid:arrow_image" alt="Arrow Icon" width="24" height="24" 
+                        style="vertical-align: middle; margin-left: 5px;">
+                    </a>
+                        <span style="font-size: 14px; color: #555555;">מעבר לאפליקציה</span>
+                    </td>
+                </tr>
+            </table>
+            <!-- Orange background below -->
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                    <td style="background-color: #ff8c00; height: 15px; border-radius: 0 0 15px 15px;">
+                        &nbsp;
                     </td>
                 </tr>
             </table>
