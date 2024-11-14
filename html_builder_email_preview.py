@@ -252,16 +252,12 @@ def generate_news_block_html_for_preview(news_items, main_page_content):
 
     return news_block_html_page
 
-def make_html_for_preview():
+def make_html_for_preview(news_main_page, pending_news):
     """
     Fetches the main page and pending news items from the database, generates HTML for preview purposes.
 
     :return: A string containing the full HTML for the email preview.
     """
-
-    news_main_page = fetch_main_page()
-    pending_news = fetch_pending_news()
-
     if news_main_page and pending_news:
         main_page_content = news_main_page[0]
 

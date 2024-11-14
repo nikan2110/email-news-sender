@@ -249,16 +249,12 @@ def generate_news_block_html(news_items, main_page_content):
 
     return news_block_html_page
 
-def make_html_for_email():
+def make_html_for_email(news_main_page, pending_news):
     """
     Fetches the main page and news content from the database and generates HTML for the email.
 
     :return: A tuple containing the main page content, main page HTML, and news block HTML.
     """
-
-    news_main_page = fetch_main_page()
-    pending_news = fetch_pending_news()
-
     if news_main_page and pending_news:
         main_page_content = news_main_page[0]
 

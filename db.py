@@ -44,6 +44,25 @@ def add_main_page(main_page):
         session.close()
 
 def add_email_html_link_to_main_page(main_page_news_id, email_html_link):
+    """
+       Updates the `history_link` field in the `NewsMainPage` table with the given email HTML link.
+
+       Args:
+           main_page_news_id (int): The ID of the main page to update.
+           email_html_link (str): The HTML link to associate with the specified main page.
+
+       Raises:
+           Exception: If the database update fails for any reason, an exception is raised after rolling back the transaction.
+
+       Logging:
+           Logs the process of adding the email HTML link, including success and failure cases.
+
+       Database Interaction:
+           - Opens a new database session.
+           - Updates the `history_link` field for the specified `main_page_news_id`.
+           - Commits the transaction on success or rolls back on failure.
+           - Closes the session upon completion.
+       """
     session = Session()
     try:
         logging.info(f"Adding email html link for main page ID: {main_page_news_id}")
@@ -57,7 +76,6 @@ def add_email_html_link_to_main_page(main_page_news_id, email_html_link):
         raise e
     finally:
         session.close()
-
 
 def move_news_up(news_id):
     """
@@ -79,7 +97,6 @@ def move_news_up(news_id):
     finally:
         session.close()
 
-
 def move_news_down(news_id):
     """
     Moves the news item with the given ID down in the sort order.
@@ -100,7 +117,6 @@ def move_news_down(news_id):
     finally:
         session.close()
 
-
 def fetch_pending_news():
     """
     Fetches all news that have not been sent yet.
@@ -116,7 +132,6 @@ def fetch_pending_news():
     finally:
         session.close()
 
-
 def fetch_main_page():
     """
     Fetches the main page that has not been sent yet.
@@ -131,13 +146,26 @@ def fetch_main_page():
         session.close()
 
 def fetch_main_pages_with_history():
+    """
+    Fetches all main pages from the `NewsMainPage` table that have a non-null `history_link`.
+
+    Returns:
+        list: A list of `NewsMainPage` objects with non-null `history_link`.
+
+    Logging:
+        Logs the process of fetching main pages.
+
+    Database Interaction:
+        - Opens a new database session.
+        - Queries the `NewsMainPage` table for entries where `history_link` is not `None`.
+        - Closes the session upon completion.
+    """
     session = Session()
     try:
         logging.info("Fetching main page")
         return session.query(NewsMainPage).filter(NewsMainPage.history_link.isnot(None)).all()
     finally:
         session.close()
-
 
 def update_news_block_status(news_ids):
     """
@@ -157,7 +185,6 @@ def update_news_block_status(news_ids):
         raise e
     finally:
         session.close()
-
 
 def update_news_main_page_status(main_page_news_id):
     """
@@ -179,7 +206,6 @@ def update_news_main_page_status(main_page_news_id):
     finally:
         session.close()
 
-
 def remove_news_block(news_block):
     """
     Removes a news block from the database.
@@ -199,7 +225,6 @@ def remove_news_block(news_block):
     finally:
         session.close()
 
-
 def remove_main_page(main_page):
     """
     Removes a main page from the database.
@@ -218,7 +243,6 @@ def remove_main_page(main_page):
         raise e
     finally:
         session.close()
-
 
 def get_next_id(model_type):
     """
@@ -245,7 +269,6 @@ def get_next_id(model_type):
     finally:
         session.close()
 
-
 def get_next_sort_order():
     """
         Gets the next available sort order value for a new news item.
@@ -264,7 +287,6 @@ def get_next_sort_order():
         logging.exception("Failed to get next ID")
     finally:
         session.close()
-
 
 def update_news(news_id, updated_title, updated_description, updated_link, selected_strategy_path,
                 selected_strategy_name):
@@ -300,7 +322,6 @@ def update_news(news_id, updated_title, updated_description, updated_link, selec
     finally:
         session.close()
 
-
 def update_main_page(main_page_id, updated_title, updated_description, updated_date):
     """
     Updates the main page with the given information.
@@ -332,6 +353,23 @@ def update_main_page(main_page_id, updated_title, updated_description, updated_d
         session.close()
 
 def fetch_all_strategies():
+    """
+     Fetches all records from the `NewsStrategy` table.
+
+     Returns:
+         list: A list of `NewsStrategy` objects representing all strategies in the database.
+
+     Raises:
+         Exception: If the query fails, logs the exception without re-raising it.
+
+     Logging:
+         Logs any failure encountered during the fetching process.
+
+     Database Interaction:
+         - Opens a new database session.
+         - Queries all records from the `NewsStrategy` table.
+         - Closes the session upon completion.
+     """
     session = Session()
     try:
         return session.query(NewsStrategy).all()
@@ -339,7 +377,6 @@ def fetch_all_strategies():
         logging.exception("Failed to get next ID")
     finally:
         session.close()
-
 
 def fetch_all_recipients():
     """

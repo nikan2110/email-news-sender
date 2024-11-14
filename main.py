@@ -29,7 +29,6 @@ def save_image_as_png(image, news_id):
     img.save(output_path, format='PNG')
     logging.info(f"Image saved as {output_path}")
 
-
 def delete_image(news_id):
     """
     Deletes the image associated with a specific news ID.
@@ -44,14 +43,15 @@ def delete_image(news_id):
         st.warning(f"Image {image_path_png} not found, cannot delete")
         logging.warning(f"Image {image_path_png} not found, skipping deletion")
 
-
 def render_preview_tab():
     """
     Renders the preview tab for displaying a preview of the email.
     """
+    news_main_page = fetch_main_page()
+    pending_news = fetch_pending_news()
     with preview_tab:
         logging.info("Rendering Preview Tab")
-        html_for_preview = make_html_for_preview()
+        html_for_preview = make_html_for_preview(news_main_page, pending_news)
 
         html_with_scroll = f"""
         <div style="height: 100vh; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
@@ -61,7 +61,6 @@ def render_preview_tab():
 
         st.markdown("### Email Preview:")
         st.components.v1.html(html_with_scroll, height=700)
-
 
 def render_send_email_tab():
     """
@@ -77,12 +76,10 @@ def render_send_email_tab():
             st.success("Email was sent successfully")
             logging.info("Email sent successfully")
 
-
 def render_news_block_tab():
     """
     Renders the tab for adding, updating, and deleting news blocks.
     """
-
     with news_block_tab:
         logging.info("Rendering News Block Tab")
         st.header("Add new news")
@@ -152,9 +149,6 @@ def render_news_block_tab():
 
                     link = st.text_input(f"News link ID {news.news_id}", news.news_link, key=f"link_{news.news_id}")
 
-
-
-
                 with image_column:
                     image_path = get_image_path(news.news_id)
                     image_path_png = os.path.splitext(image_path)[0] + '.png'
@@ -195,7 +189,6 @@ def render_news_block_tab():
                         logging.info(f"Changes for news ID {news.news_id} saved successfully")
                         st.rerun()
 
-
                 with delete_button_col:
                     if st.button(f"Delete news ID {news.news_id}", key=f"delete_{news.news_id}", type='primary'):
                         logging.info(f"Deleting news ID: {news.news_id}")
@@ -204,8 +197,6 @@ def render_news_block_tab():
                         st.success(f"News ID {news.news_id} was successfully deleted.")
                         logging.info(f"News ID {news.news_id} deleted successfully")
                         st.rerun()
-
-
 
 def render_main_page_tab():
     """
@@ -266,8 +257,26 @@ def render_main_page_tab():
                     st.success(f"Main page ID {main_page.main_page_news_id} was successfully deleted.")
                     logging.info(f"Main page ID {main_page.main_page_news_id} deleted successfully")
 
-
 def render_history_tab():
+    """
+    Renders the History tab in the Streamlit application.
+
+    Functionality:
+        - Displays a header for the History tab.
+        - Fetches main pages with associated history links using `fetch_main_pages_with_history`.
+        - Displays a message if no history entries are found.
+        - For each main page with a history link:
+            - Formats the date of the email from `news_date`.
+            - Displays a clickable markdown link to the history file.
+
+    Uses:
+        - Streamlit's UI components such as `st.header`, `st.write`, and `st.markdown`.
+
+    Dependencies:
+        - `fetch_main_pages_with_history`: Retrieves the main pages with history links from the database.
+        - `main_page.history_link`: The link to the historical email.
+        - `main_page.news_date`: The date of the newsletter, formatted as MM/DD/YYYY.
+    """
     with history_tab:
         st.header("History Tab")
 
@@ -281,8 +290,6 @@ def render_history_tab():
                 file_link = main_page.history_link
 
                 st.markdown(f"[Email from {file_date}] - ({file_link})", unsafe_allow_html=True)
-
-
 
 if __name__ == '__main__':
     logging.info("Starting Email Sender Application")

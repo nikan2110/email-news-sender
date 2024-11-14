@@ -7,12 +7,12 @@ from config import logging
 from constants import SMTP_USER, SMTP_PASSWORD, SMTP_SERVER, SMTP_PORT, EMAIL_HISTORY_PATH
 import psycopg2
 from db import fetch_all_recipients, update_news_main_page_status, update_news_block_status, \
-    add_email_html_link_to_main_page
+    add_email_html_link_to_main_page, fetch_main_page, fetch_pending_news
 from html_builder_email_main import make_html_for_email
 from html_builder_email_preview import make_html_for_preview
 
 
-def add_header_and_news_images_to_news_block(msg):
+def add_header_and_news_images_to_news_block(msg, pending_news):
     """
     Attaches header and news images to the email message.
 
@@ -35,26 +35,28 @@ def add_header_and_news_images_to_news_block(msg):
             mime_img.add_header('Content-Disposition', 'inline', filename="header")
             msg.attach(mime_img)
 
-        for image_name in os.listdir("static/news_images"):
-            if image_name.endswith('.png'):
-                image_path = os.path.join("static/news_images", image_name)
-                image_id = image_name.split('.')[0]
+        for news in pending_news:
+            image_path = f"static/news_images/{news.news_id}.png"
+            image_id = news.news_id
 
-                news_ids.append(image_id)
+            news_ids.append(news.news_id)
 
+            if os.path.exists(image_path):
                 with open(image_path, 'rb') as img:
                     mime_img = MIMEImage(img.read())
                     mime_img.add_header('Content-ID', f'<news_image_{image_id}>')
-                    mime_img.add_header('Content-Disposition', 'inline', filename=image_name)
+                    mime_img.add_header('Content-Disposition', 'inline', filename=f"{image_id}.png")
                     msg.attach(mime_img)
-                logging.info(f"Attached image {image_name} for news ID {image_id}")
+                logging.info(f"Attached image for news ID {image_id}")
+            else:
+                logging.warning(f"Image for news ID {image_id} not found at {image_path}")
+
 
     except Exception as e:
         logging.exception("Error while attaching images to news block")
         raise e
 
     return news_ids
-
 
 def add_header_and_footer_images_to_main_page(msg):
     """
@@ -81,27 +83,43 @@ def add_header_and_footer_images_to_main_page(msg):
         logging.exception("Error while attaching images to main page")
         raise e
 
+def add_strategy_images_to_news_block(msg, pending_news):
+    """
+    Attaches strategy images to the email for each news item in the `pending_news` list.
 
-def add_strategy_images_to_news_block(msg):
+    Parameters:
+        msg (MIMEMultipart): The email message object to which images will be attached.
+        pending_news (list of News): A list of News objects containing information about the news items,
+                                     including paths to strategy images and strategy names.
+
+    This function iterates over the provided `pending_news` list, checks if each news item has a valid
+    `strategy_image_path`, and attaches the image to the email with a unique Content-ID based on the
+    strategy name. If an image file does not exist at the specified path, a warning is logged.
+
+    Raises:
+        Exception: If an error occurs while attaching images, the exception is logged and re-raised.
+    """
     try:
-        for strategy_icon in os.listdir("static/basic_images/strategy_icons"):
-            if strategy_icon.endswith('.png'):
-                image_path = os.path.join("static/basic_images/strategy_icons", strategy_icon)
-                strategy_name = strategy_icon.split('.')[0]
+        for news in pending_news:
 
+            image_path = news.strategy_image_path
+            strategy_name = news.strategy_name
+
+            if image_path and os.path.exists(image_path):
                 with open(image_path, 'rb') as img:
                     mime_img = MIMEImage(img.read())
                     mime_img.add_header('Content-ID', f'<strategy_image_{strategy_name}>')
                     mime_img.add_header('Content-Disposition', 'inline', filename=strategy_name)
                     msg.attach(mime_img)
-                logging.info(f"Attached image {strategy_name} for news ID {strategy_name}")
+                logging.info(f"Attached image {strategy_name} for news ID {news.news_id}")
+            else:
+                logging.warning(f"Image for strategy {strategy_name} not found at {image_path}")
 
     except Exception as e:
         logging.exception("Error while attaching images to main page")
         raise e
 
-
-def send_email(main_page_html, html_content):
+def send_email(main_page_html, html_content, pending_news):
     """
     Sends an email with the main page and news block content.
 
@@ -135,8 +153,8 @@ def send_email(main_page_html, html_content):
 
     logging.info("Attaching main page and news block images")
     add_header_and_footer_images_to_main_page(msg)
-    add_strategy_images_to_news_block(msg)
-    news_ids = add_header_and_news_images_to_news_block(msg)
+    add_strategy_images_to_news_block(msg, pending_news)
+    news_ids = add_header_and_news_images_to_news_block(msg, pending_news)
 
     try:
         logging.info("Starting email server and sending email")
@@ -175,11 +193,26 @@ def get_recipients_list():
     logging.info(f"Recipients: {recipients_string}")
     return recipients_string
 
+def save_email_history(main_page_id, main_page_date, news_main_page, pending_news):
+    """
+        Saves an HTML preview of the email to the history folder and adds a link to the main page in the database.
 
-def save_email_history(main_page_id, main_page_date):
+        Parameters:
+            main_page_id (int): The ID of the main page to associate with the saved HTML file.
+            main_page_date (str): The date of the main page, used in the file name for the saved HTML.
+            news_main_page (dict): The main page content used for the email preview.
+            pending_news (list of News): A list of News objects containing the news items to be included in the email.
+
+        This function generates an HTML preview of the email using the provided main page and news items, saves the
+        HTML to the `email_history` folder with a file name based on `main_page_date`, and adds a link to this
+        saved file in the main page record in the database.
+
+        Raises:
+            Exception: If an error occurs while writing the file or updating the main page, it will be propagated.
+        """
 
     history_folder = 'static/email_history'
-    html_for_saving = make_html_for_preview()
+    html_for_saving = make_html_for_preview(news_main_page, pending_news)
 
     file_name = f"email_{main_page_date}.html"
     file_path = os.path.join(history_folder, file_name)
@@ -199,14 +232,18 @@ def send_news():
     """
     logging.info("Sending news email")
     try:
-        main_page_content, main_page_html, news_block_html = make_html_for_email()
+        news_main_page = fetch_main_page()
+        pending_news = fetch_pending_news()
 
-        news_ids = send_email(main_page_html, news_block_html)
+        main_page_content, main_page_html, news_block_html = make_html_for_email(news_main_page, pending_news)
+
+        news_ids = send_email(main_page_html, news_block_html, pending_news)
 
         # update_news_main_page_status(main_page_content.main_page_news_id)
         # update_news_block_status(news_ids)
 
-        save_email_history(main_page_content.main_page_news_id,main_page_content.news_date)
+        save_email_history(main_page_content.main_page_news_id,main_page_content.news_date, news_main_page,
+                           pending_news)
 
 
         logging.info("Email sent and status updated successfully")
