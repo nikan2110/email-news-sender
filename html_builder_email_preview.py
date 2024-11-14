@@ -22,11 +22,11 @@ def generate_main_page_for_preview(main_page_content):
 </head>
 <body style="margin: 0; padding: 0; background-color: #ffffff; font-family: Arial, sans-serif;">
 
-    <!-- Main container -->
+                                        <!-- Main container -->
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center" 
     style="background-color: #ffffff; margin: 0 auto; border-collapse: collapse;">
 
-        <!-- Header Image -->
+                                        <!-- Header Image -->
         <tr>
             <td style="text-align: center;">
                 <img src="{IMAGE_PREVIEW_PATH}/basic_images/header_main_page.jpg" 
@@ -34,7 +34,7 @@ def generate_main_page_for_preview(main_page_content):
             </td>
         </tr>
 
-        <!-- Title and Date Block  -->
+                                        <!-- Title and Date Block  -->
 <tr>
     <td style="padding: 10px 0; background-color: #7a2e2e;">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -53,7 +53,7 @@ def generate_main_page_for_preview(main_page_content):
     </td>
 </tr>
 
-        <!-- Main content with background and padding -->
+                                    <!-- Main content with background and padding -->
         <tr>
             <td style="padding: 20px; 
             font-family: Arial, Helvetica, sans-serif;
@@ -63,7 +63,7 @@ def generate_main_page_for_preview(main_page_content):
             </td>
         </tr>
 
-        <!-- Footer  -->
+                                                        <!-- Footer  -->
         <tr>
             <td style="padding: 20px; background-color: #ffffff;">
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -107,18 +107,18 @@ def generate_news_block_canvas_for_preview(main_page_content):
 
 <body style="margin:0; padding:0; background-color:#ffffff; font-family: Arial, sans-serif;">
 
-    <!-- Main container -->
+                                                <!-- Main container -->
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center" 
     style="background-color: #ffffff; margin: 0 auto;">
 
-        <!-- Header Image -->
+                                                    <!-- Header Image -->
         <tr>
             <td style="text-align: center;">
                 <img src="{IMAGE_PREVIEW_PATH}/basic_images/header.jpg" alt="Header Image" width="600" style="display: block;">
             </td>
         </tr>
 
-        <!-- Title -->
+                                                        <!-- Title -->
         <tr>
             <td align="right" dir="rtl" style="padding: 20px; background-color: #7a2e2e; color: white;">
                 <h1 style="margin: 0; font-size: 26px; {FONT_FAMILY_NEWS_BLOCK}">{main_page_content.title}</h1>
@@ -136,77 +136,83 @@ def generate_news_block_content_for_preview(news_item):
     """
 
     news_block = f"""
-    <!-- News Block -->
-    <tr>
-        <td style="padding: 10px; background-color: #ffffff; direction: rtl; text-align: right;">
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center">
-                <tr>
-                    <!-- Right image with icon in the bottom right corner -->
-                    <td width="220" style="text-align: right; vertical-align: top; ">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="228" style="position: relative;">
-                            <tr>
-                                <td style="position: relative;">
-                                    <!-- Main image -->
-                                    <a href="{news_item.news_link}" target="_blank">
-                                        <img src="{IMAGE_PREVIEW_PATH}/news_images/{news_item.news_id}.png" 
-                                             alt="News Image" width="228" style="display: block; border-radius: 5px;">
-                                    </a>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-
-                    <!-- Spacer -->
-                    <td width="20">
-                        &nbsp;
-                    </td>
-
-                    <!-- Left content (Text in Hebrew) with icon -->
-                    <td width="328" style="direction: rtl; text-align: right; vertical-align: top;">
-                        <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;{FONT_FAMILY_NEWS_BLOCK}
+                                            <!-- News Block -->
+<tr>
+    <td style="padding: 10px; padding-bottom: 0px; background-color: #ffffff; direction: rtl; text-align: right;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center">
+            <tr>
+            
+                                <!-- Right image with icon in the bottom right corner -->
+                <td width="220" style="text-align: right; vertical-align: top; ">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="228" style="position: relative;">
+                        <tr>
+                            <td>
+    
+                                                        <!-- Main image -->
+                                <a href="{news_item.news_link}" target="_blank">
+                                <img src="{IMAGE_PREVIEW_PATH}/news_images/{news_item.news_id}.png" 
+                                    alt="News Image" width="228" style="display: block; border-radius: 5px;">
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                
+                                                        <!-- Spacer -->
+                <td width="20">
+                    &nbsp;
+                </td>
+                
+                                    <!-- Left content (Text in Hebrew) with icon -->
+                <td width="328" style="direction: rtl; text-align: right; vertical-align: top;">
+                    <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;{FONT_FAMILY_NEWS_BLOCK}
                         {LINE_HEIGHT_NEWS_BLOCK}">
-                            {news_item.title}
-                        </h2>
-                        <p style="color: #555555; font-family: Arial, Helvetica, sans-serif;
+                        {news_item.title}
+                    </h2>
+                    <p style="color: #555555; font-family: Arial, Helvetica, sans-serif;
                         font-size: 16px; direction: rtl; margin: 0;{FONT_FAMILY_NEWS_BLOCK} {LINE_HEIGHT_NEWS_BLOCK}">
-                            {news_item.description}
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
+                        {news_item.description}
+                    </p>
+                </td>
+                
+            </tr>
+        </table>
+    </td>
+</tr>
 
-<!-- Footer with custom styling -->
+                                        <!-- Footer with custom styling -->
 <tr>
     <td style="padding: 0; text-align: center;">
-        <!-- White rounded top part -->
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-            <tr>
-<!-- Левая часть с текстом и стрелкой -->
-<td style="background-color: #ffffff; text-align: left; width: 30px; padding: 0; padding-left: 20px;">
-    <a href="{news_item.news_link}" target="_blank" style="text-decoration: none;">
-        <img src="{IMAGE_PREVIEW_PATH}/basic_images/arrow.png" alt="Arrow Icon" width="24" height="24" 
-             style="vertical-align: middle;">
-    </a>
-</td>
-<td style="vertical-align: middle; text-align: left; padding-left: 5px;">
-    <span style="font-size: 14px; {FONT_FAMILY_NEWS_BLOCK}; color: #555555;">מעבר לאפליקציה</span>
-</td>
-
-                <!-- Правая часть с увеличенной иконкой -->
-                <td style="width: 100px; text-align: right; padding-right: 10px; ">
-                    <div style="width: 100px; height: 100px; background-color: #ffffff; border-radius: 35px; display: inline-flex; align-items: center; justify-content: center;">
-                        <img src="{IMAGE_PREVIEW_PATH}/basic_images/icon.png" alt="Security Icon" width="100" height="100">
+                                                 <!-- White rounded top part -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 0; margin: 0;">
+                                            <!-- Left side with arrow and text -->
+            <tr>                     
+                <td style="background-color: #ffffff; text-align: left; width: 30px; padding: 0 10px; padding-right: 0px">
+                    <a href="{news_item.news_link}" target="_blank" style="text-decoration: none;">
+                        <img src="{IMAGE_PREVIEW_PATH}/basic_images/arrow.png" alt="Arrow Icon" width="24" height="24" 
+                        style="vertical-align: middle;">
+                    </a>
+                </td>
+                
+                <td style="vertical-align: middle; text-align: left; padding-left: 5px;">
+                    <span style="font-size: 14px; {FONT_FAMILY_NEWS_BLOCK}; color: #555555; vertical-align: middle;">מעבר לאפליקציה</span>
+                </td>
+                
+                                                    <!-- Right side with icon -->
+                <td style="width: 0px; text-align: right; padding: 0;">
+                    <div style="width: 70px; height: 70px; background-color: #ffffff; border-radius: 20px; 
+                    display: inline-flex; align-items: flex-start; justify-content: center; padding-right: 10px;">
+                        <img src="{IMAGE_PREVIEW_PATH}/basic_images/icon.png" alt="Security Icon" width="60" 
+                        height="60" style="display: inline-block;">
                     </div>
                 </td>
             </tr>
         </table>
 
-        <!-- Orange background below -->
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                                <!-- Orange background below -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 0; margin: 0;">
             <tr>
-                <td style="background-color: #ff8c00; height: 15px; border-radius: 0 0 15px 15px;">
+                <td style="background-color: #ff8c00; height: 10px; border-radius: 0 0 10px 10px;">
                     &nbsp;
                 </td>
             </tr>
@@ -214,15 +220,12 @@ def generate_news_block_content_for_preview(news_item):
     </td>
 </tr>
 
-
-
-
-    <!-- Small white space between news blocks -->
-    <tr>
-        <td style="padding: 0.5px 0;">
-              &nbsp;
-        </td>
-    </tr>
+                                        <!-- Small white space between news blocks -->
+<tr>
+    <td style="padding: 0.5px 0;">
+        &nbsp;
+    </td>
+</tr>
     """
     return news_block
 

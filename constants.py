@@ -12,9 +12,9 @@ POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 
 IMAGE_FOLDER_NEWS = "static/news_images"
 
-IMAGE_PREVIEW_PATH = "http://localhost:8501/app/static"
+IMAGE_PREVIEW_PATH = "http://localhost:8502/emailNewsBuilder/app/static"
 
-EMAIL_HISTORY_PATH = "http://localhost:8501/email_history"
+EMAIL_HISTORY_PATH = "http://localhost:8502/emailNewsBuilder/email_history"
 
 MAIN_PAGE_MODEL = "main_page"
 

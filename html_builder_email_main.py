@@ -14,43 +14,45 @@ def generate_main_page(main_page_content):
     main_page_block = f""" 
 <!DOCTYPE html>
 <html lang="he">
-<head>
-    <meta charset="UTF-8">
-    <title>Custom Email</title>
-</head>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Custom Email</title>
+    </head>
+
 <body style="margin: 0; padding: 0; background-color: #ffffff; font-family: Arial, sans-serif;">
 
-    <!-- Main container -->
+                                <!-- Main container -->
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center" 
-    style="background-color: #ffffff; margin: 0 auto; border-collapse: collapse;">
-        
-        <!-- Header Image -->
+        style="background-color: #ffffff; margin: 0 auto; border-collapse: collapse;">
+
+                                <!-- Header Image -->
         <tr>
             <td style="text-align: center;">
                 <img src="cid:main_page_header_image" alt="Header Image" width="600" style="display: block;">
             </td>
         </tr>
 
-        <!-- Title and Date Block  -->
-<tr>
-    <td style="padding: 10px 0; background-color: #7a2e2e;">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <!-- Date -->
-                <td style="text-align: left; font-size: 14px; color: white; padding-left: 20px;">
-                    {main_page_content.news_date}
-                </td>
-                <!-- Title -->
-                <td style="text-align: right; direction: rtl; color: white; 
-                font-size: 20px; font-weight: bold; padding-right: 20px;{FONT_FAMILY_MAIN_PAGE}">
-                    {main_page_content.title}
-                </td>
-            </tr>
-        </table>
-    </td>
-</tr>
-        
-        <!-- Main content with background and padding -->
+                            <!-- Title and Date Block  -->
+        <tr>
+            <td style="padding: 10px 0; background-color: #7a2e2e;">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                                                <!-- Date -->
+                        <td style="text-align: left; font-size: 14px; color: white; padding-left: 20px;">
+                            {main_page_content.news_date}
+                        </td>
+                                                 <!-- Title -->
+                        <td style="text-align: right; direction: rtl; color: white; 
+                            font-size: 20px; font-weight: bold; padding-right: 20px;{FONT_FAMILY_MAIN_PAGE}">
+                            {main_page_content.title}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+                        <!-- Main content with background and padding -->
         <tr>
             <td style="padding: 20px; background-color: #fafafa; text-align: right; direction: rtl; color: #333333; 
             font-size: 15px;{LINE_HEIGHT_MAIN_PAGE}{FONT_FAMILY_MAIN_PAGE}">
@@ -58,7 +60,7 @@ def generate_main_page(main_page_content):
             </td>
         </tr>
 
-        <!-- Footer  -->
+                                            <!-- Footer  -->
         <tr>
             <td style="padding: 20px; background-color: #ffffff;">
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -76,7 +78,7 @@ def generate_main_page(main_page_content):
                 </table>
             </td>
         </tr>
-
+        
     </table>
 </body>
 </html>
@@ -102,18 +104,18 @@ def generate_news_block_canvas(main_page_content):
 
 <body style="margin:0; padding:0; background-color:#ffffff; font-family: Arial, sans-serif;">
 
-    <!-- Main container -->
+                                    <!-- Main container -->
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center" 
     style="background-color: #ffffff; margin: 0 auto;">
 
-        <!-- Header Image -->
+                                    <!-- Header Image -->
         <tr>
             <td style="text-align: center;">
                 <img src="cid:header_image" alt="Header Image" width="600" style="display: block;">
             </td>
         </tr>
 
-        <!-- Title -->
+                                        <!-- Title -->
         <tr>
             <td align="right" dir="rtl" style="padding: 20px; background-color: #7a2e2e; color: white;">
                 <h1 style="margin: 0; font-size: 26px;{FONT_FAMILY_NEWS_BLOCK}">{main_page_content.title}</h1>
@@ -138,27 +140,28 @@ def generate_news_block_content(news_item):
         <td style="padding: 10px; background-color: #ffffff; direction: rtl; text-align: right;">
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" align="center">
                 <tr>
-                    <!-- Right image with icon in the bottom right corner -->
+                                        <!-- Right image with icon in the bottom right corner -->
                     <td width="220" style="text-align: right; vertical-align: top; ">
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="228" style="position: relative;">
                             <tr>
+                                                            <!-- Main image -->
                                 <td style="position: relative;">
-                                    <!-- Main image -->
                                     <a href="{news_item.news_link}" target="_blank">
                                         <img src="cid:news_image_{news_item.news_id}" alt="News Image" width="228" 
                                              alt="News Image" width="228" style="display: block; border-radius: 5px;">
                                     </a>
                                 </td>
+                                
                             </tr>
                         </table>
                     </td>
 
-                    <!-- Spacer -->
+                                        <!-- Spacer -->
                     <td width="20">
                         &nbsp;
                     </td>
 
-                    <!-- Left content (Text in Hebrew) with icon -->
+                                                <!-- Left content (Text in Hebrew) with icon -->
                     <td width="328" style="direction: rtl; text-align: right; vertical-align: top;">
                         <h2 style="color: #7a2e2e; font-size: 18px; margin: 0;{FONT_FAMILY_NEWS_BLOCK}">
                             {news_item.title}
@@ -173,32 +176,37 @@ def generate_news_block_content(news_item):
         </td>
     </tr>
     
- <!-- Footer with custom styling -->
+    
+                                        <!-- Footer with custom styling -->
 <tr>
     <td style="padding: 0; text-align: center;">
-        <!-- White rounded top part -->
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <!-- White rounded top part -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 0; margin: 0;">
+                                                <!-- Left side with arrow and text -->
             <tr>
-            <!-- Левая часть с текстом и стрелкой -->
-<td style="background-color: #ffffff; text-align: left; width: 30px; padding: 0; padding-left: 20px;">
-    <a href="{news_item.news_link}" target="_blank" style="text-decoration: none;">
+                <td style="background-color: #ffffff; text-align: left; width: 30px; padding: 0 10px;">
+                    <a href="{news_item.news_link}" target="_blank" style="text-decoration: none;">
                         <img src="cid:arrow_image" alt="Arrow Icon" width="24" height="24" 
-                             style="vertical-align: middle; margin-left: 5px;">
-    </a>
-</td>
-<td style="vertical-align: middle; text-align: left; padding-left: 5px;">
-    <span style="font-size: 14px; {FONT_FAMILY_NEWS_BLOCK}; color: #555555;">מעבר לאפליקציה</span>
-</td>
-                <!-- Правая часть с увеличенной иконкой -->
-                <td style="width: 100px; text-align: right; padding-right: 10px;">
-                    <div style="width: 100px; height: 100px; background-color: #ffffff; border-radius: 35px; display: inline-flex; align-items: center; justify-content: center;">
-                        <img src="cid:icon" alt="Security Icon" width="100" height="100">
+                        style="vertical-align: middle;">
+                    </a>
+                </td>
+                
+                <td style="vertical-align: middle; text-align: left; padding-left: 5px;">
+                    <span style="font-size: 14px; {FONT_FAMILY_NEWS_BLOCK}; color: #555555; vertical-align: middle;">מעבר לאפליקציה</span>
+                </td>
+                
+                                                    <!-- Right side with icon -->
+                <td style="width: 0px; text-align: right; padding: 0;">
+                    <div style="width: 70px; height: 70px; background-color: #ffffff; border-radius: 20px; 
+                    display: inline-flex; align-items: flex-start; justify-content: center; padding-right: 10px;">
+                        <img src="cid:icon" alt="Security Icon" width="60" 
+                        height="60" style="display: inline-block;">
                     </div>
                 </td>
             </tr>
         </table>
 
-        <!-- Orange background below -->
+                                                    <!-- Orange background below -->
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
             <tr>
                 <td style="background-color: #ff8c00; height: 15px; border-radius: 0 0 15px 15px;">
@@ -209,7 +217,7 @@ def generate_news_block_content(news_item):
     </td>
 </tr>
 
-    <!-- Small white space between news blocks -->
+                                            <!-- Small white space between news blocks -->
     <tr>
         <td style="padding: 0.5px 0;">
               &nbsp;
