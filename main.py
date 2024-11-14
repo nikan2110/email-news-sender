@@ -90,15 +90,26 @@ def render_news_block_tab():
         new_news_id = get_next_id(NEWS_BLOCK_MODEL)
         logging.info(f"Generated new news ID: {new_news_id}")
 
+        strategies = fetch_all_strategies()
+
+        strategy_options = {strategy.strategy_path: strategy.strategy_name_en for strategy in strategies}
+        display_options = {strategy.strategy_name: strategy.strategy_path for strategy in strategies}
+
         new_news_title = st.text_input("News title", key="new_news_title")
         new_news_description = st.text_area("News description", key="new_news_description")
+        selected_strategy_name = st.selectbox(f"New strategy", list(display_options.keys()),key=f"new_news_strategy")
         news_link = st.text_input("News link", key="new_news_link")
         news_sort_order = get_next_sort_order()
+
+        selected_strategy_path = display_options[selected_strategy_name]
+        selected_strategy_name_en = strategy_options[selected_strategy_path]
 
         if st.button("Add new news", key="add_news"):
             logging.info(f"Adding news with ID: {new_news_id}")
             new_news = News(news_id=new_news_id, title=new_news_title, description=new_news_description,
-                            news_link=news_link, is_send=False, sort_order=news_sort_order)
+                            news_link=news_link, is_send=False, strategy_image_path=selected_strategy_path,
+                            strategy_name=selected_strategy_name_en,
+                            sort_order=news_sort_order)
             add_news(new_news)
             st.success("News added successfully")
             logging.info(f"News with ID: {new_news_id} added successfully")
@@ -120,18 +131,28 @@ def render_news_block_tab():
                                                key=f"description_{news.news_id}")
 
                     strategies = fetch_all_strategies()
-                    strategy_options = {strategy.strategy_name: strategy.strategy_path for strategy in strategies}
+
+                    strategy_options = {strategy.strategy_path : strategy.strategy_name_en  for strategy in strategies}
+                    display_options = {strategy.strategy_name: strategy.strategy_path for strategy in strategies}
 
                     if news.strategy_name:
-                        default_index = list(strategy_options.keys()).index(news.strategy_name)
+                        en_he_name = {strategy.strategy_name_en: strategy.strategy_name for strategy in strategies}
+                        he_name = en_he_name.get(news.strategy_name)
+                        default_index = list(display_options.keys()).index(he_name)
                     else:
                         default_index = 0
 
                     selected_strategy_name = st.selectbox(
-                        f"Choose strategy for news ID {news.news_id}", strategy_options, index=default_index,
+                        f"Choose strategy for news ID {news.news_id}", list(display_options.keys()),
+                        index=default_index,
                         key=f"strategy_{news.news_id}")
+
+                    selected_strategy_path = display_options[selected_strategy_name]
+                    selected_strategy_name_en = strategy_options[selected_strategy_path]
+
                     link = st.text_input(f"News link ID {news.news_id}", news.news_link, key=f"link_{news.news_id}")
-                    selected_strategy_path = strategy_options[selected_strategy_name]
+
+
 
 
                 with image_column:
@@ -169,7 +190,7 @@ def render_news_block_tab():
                     if st.button(f"Save changes for news ID {news.news_id}", key=f"save_{news.news_id}"):
                         logging.info(f"Saving changes for news ID: {news.news_id}")
                         update_news(news.news_id, title, description, link, selected_strategy_path,
-                                    selected_strategy_name)
+                                    selected_strategy_name_en)
                         st.success(f"Changes for news ID {news.news_id} were successfully saved.")
                         logging.info(f"Changes for news ID {news.news_id} saved successfully")
                         st.rerun()

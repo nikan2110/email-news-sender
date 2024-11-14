@@ -45,6 +45,11 @@ class NewsStrategy(Base):
 
     strategy_name = Column(String, primary_key=True)
     strategy_path = Column(String)
+    strategy_name_en = Column(String)
+
+    def __repr__(self):
+        return (f"<NewsStrategy(strategy_name={self.strategy_name}, strategy_path={self.strategy_path}, "
+                f"self.strategy_name_en={self.strategy_name_en})>")
 
 
 class NewsMainPage(Base):

@@ -35,12 +35,6 @@ def add_header_and_news_images_to_news_block(msg):
             mime_img.add_header('Content-Disposition', 'inline', filename="header")
             msg.attach(mime_img)
 
-        with open("static/basic_images/icon.png", 'rb') as img:
-            mime_img = MIMEImage(img.read())
-            mime_img.add_header('Content-ID', '<icon>')
-            mime_img.add_header('Content-Disposition', 'inline', filename="header")
-            msg.attach(mime_img)
-
         for image_name in os.listdir("static/news_images"):
             if image_name.endswith('.png'):
                 image_path = os.path.join("static/news_images", image_name)
@@ -88,6 +82,25 @@ def add_header_and_footer_images_to_main_page(msg):
         raise e
 
 
+def add_strategy_images_to_news_block(msg):
+    try:
+        for strategy_icon in os.listdir("static/basic_images/strategy_icons"):
+            if strategy_icon.endswith('.png'):
+                image_path = os.path.join("static/basic_images/strategy_icons", strategy_icon)
+                strategy_name = strategy_icon.split('.')[0]
+
+                with open(image_path, 'rb') as img:
+                    mime_img = MIMEImage(img.read())
+                    mime_img.add_header('Content-ID', f'<strategy_image_{strategy_name}>')
+                    mime_img.add_header('Content-Disposition', 'inline', filename=strategy_name)
+                    msg.attach(mime_img)
+                logging.info(f"Attached image {strategy_name} for news ID {strategy_name}")
+
+    except Exception as e:
+        logging.exception("Error while attaching images to main page")
+        raise e
+
+
 def send_email(main_page_html, html_content):
     """
     Sends an email with the main page and news block content.
@@ -122,6 +135,7 @@ def send_email(main_page_html, html_content):
 
     logging.info("Attaching main page and news block images")
     add_header_and_footer_images_to_main_page(msg)
+    add_strategy_images_to_news_block(msg)
     news_ids = add_header_and_news_images_to_news_block(msg)
 
     try:

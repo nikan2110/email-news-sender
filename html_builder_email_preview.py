@@ -202,7 +202,7 @@ def generate_news_block_content_for_preview(news_item):
                 <td style="width: 0px; text-align: right; padding: 0;">
                     <div style="width: 70px; height: 70px; background-color: #ffffff; border-radius: 20px; 
                     display: inline-flex; align-items: flex-start; justify-content: center; padding-right: 10px;">
-                        <img src="{IMAGE_PREVIEW_PATH}/basic_images/icon.png" alt="Security Icon" width="60" 
+                        <img src="{IMAGE_PREVIEW_PATH}/basic_images/strategy_icons/{news_item.strategy_name}.png" alt="Security Icon" width="60" 
                         height="60" style="display: inline-block;">
                     </div>
                 </td>
