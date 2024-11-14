@@ -1,7 +1,7 @@
 import logging
 from sqlalchemy import func
 from config import Session
-from model import News, NewsMainPage, Recipients
+from model import News, NewsMainPage, Recipients, NewsStrategy
 
 
 def add_news(news):
@@ -266,7 +266,8 @@ def get_next_sort_order():
         session.close()
 
 
-def update_news(news_id, updated_title, updated_description, updated_link):
+def update_news(news_id, updated_title, updated_description, updated_link, selected_strategy_path,
+                selected_strategy_name):
     """
     Updates the news block with the given information.
 
@@ -274,6 +275,7 @@ def update_news(news_id, updated_title, updated_description, updated_link):
     :param updated_title: New title for the news.
     :param updated_description: New description for the news.
     :param updated_link: New link for the news.
+    :param selected_strategy_path:
     """
     session = Session()
     try:
@@ -284,6 +286,8 @@ def update_news(news_id, updated_title, updated_description, updated_link):
             news.title = updated_title
             news.description = updated_description
             news.news_link = updated_link
+            news.strategy_image_path = selected_strategy_path
+            news.strategy_name = selected_strategy_name
 
             session.commit()
             logging.info(f"News ID {news_id} updated successfully")
@@ -324,6 +328,15 @@ def update_main_page(main_page_id, updated_title, updated_description, updated_d
         session.rollback()
         logging.exception(f"Failed to update main page ID {main_page_id}")
         raise e
+    finally:
+        session.close()
+
+def fetch_all_strategies():
+    session = Session()
+    try:
+        return session.query(NewsStrategy).all()
+    except Exception as e:
+        logging.exception("Failed to get next ID")
     finally:
         session.close()
 

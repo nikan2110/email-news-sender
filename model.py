@@ -22,6 +22,8 @@ class News(Base):
     is_send = Column(Boolean, default=False)
     news_link = Column(String)
     sort_order = Column(Integer)
+    strategy_image_path = Column(String)
+    strategy_name = Column(String)
 
     def __repr__(self):
         return f"<News(" \
@@ -29,6 +31,20 @@ class News(Base):
                f"description={self.description}, " \
                f"sent={self.is_send}, " \
                f")>"
+
+class NewsStrategy(Base):
+    """
+    Represents a news strategy.
+
+    Attributes:
+        strategy_name (str): Strategy name.
+        strategy_path (str): Strategy image path.
+    """
+
+    __tablename__ = 'news_strategies'
+
+    strategy_name = Column(String, primary_key=True)
+    strategy_path = Column(String)
 
 
 class NewsMainPage(Base):

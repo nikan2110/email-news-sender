@@ -6,7 +6,8 @@ from PIL import Image
 
 from constants import NEWS_BLOCK_MODEL, MAIN_PAGE_MODEL
 from db import fetch_pending_news, remove_news_block, add_news, update_news, get_next_id, fetch_main_page, \
-    update_main_page, remove_main_page, move_news_up, move_news_down, get_next_sort_order, fetch_main_pages_with_history
+    update_main_page, remove_main_page, move_news_up, move_news_down, get_next_sort_order, \
+    fetch_main_pages_with_history, fetch_all_strategies
 from email_sender import send_news
 from html_builder_email_preview import make_html_for_preview
 from model import News, NewsMainPage
@@ -117,7 +118,21 @@ def render_news_block_tab():
                     title = st.text_input(f"News title ID {news.news_id}", news.title, key=f"title_{news.news_id}")
                     description = st.text_area(f"News description ID {news.news_id}", news.description,
                                                key=f"description_{news.news_id}")
+
+                    strategies = fetch_all_strategies()
+                    strategy_options = {strategy.strategy_name: strategy.strategy_path for strategy in strategies}
+
+                    if news.strategy_name:
+                        default_index = list(strategy_options.keys()).index(news.strategy_name)
+                    else:
+                        default_index = 0
+
+                    selected_strategy_name = st.selectbox(
+                        f"Choose strategy for news ID {news.news_id}", strategy_options, index=default_index,
+                        key=f"strategy_{news.news_id}")
                     link = st.text_input(f"News link ID {news.news_id}", news.news_link, key=f"link_{news.news_id}")
+                    selected_strategy_path = strategy_options[selected_strategy_name]
+
 
                 with image_column:
                     image_path = get_image_path(news.news_id)
@@ -153,7 +168,8 @@ def render_news_block_tab():
                 with save_button_col:
                     if st.button(f"Save changes for news ID {news.news_id}", key=f"save_{news.news_id}"):
                         logging.info(f"Saving changes for news ID: {news.news_id}")
-                        update_news(news.news_id, title, description, link)
+                        update_news(news.news_id, title, description, link, selected_strategy_path,
+                                    selected_strategy_name)
                         st.success(f"Changes for news ID {news.news_id} were successfully saved.")
                         logging.info(f"Changes for news ID {news.news_id} saved successfully")
                         st.rerun()

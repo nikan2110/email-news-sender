@@ -190,6 +190,7 @@ static/news_images/*.jpg
 /news.csv
 *.jpg
 static/basic_images/*.png
+static/basic_images/strategy_icons/*
 static/basic_images/*.jpeg
 static/basic_images/*.jpg
 *.sql
