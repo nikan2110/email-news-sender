@@ -70,9 +70,17 @@ def render_send_email_tab():
         logging.info("Rendering Send Email Tab")
         st.title("Mailing List Control Panel")
 
+        environment = st.radio(
+            "Select Environment for Sending Emails:",
+            ("Development", "Production"),
+            index=0
+        )
+
+        st.write(f"Current environment: {environment}")
+
         if st.button("🔴 Send Email"):
             logging.info("Send Email button clicked")
-            send_news()
+            send_news(environment)
             st.success("Email was sent successfully")
             logging.info("Email sent successfully")
 

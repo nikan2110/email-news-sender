@@ -224,7 +224,7 @@ def save_email_history(main_page_id, main_page_date, news_main_page, pending_new
 
     add_email_html_link_to_main_page(main_page_id,email_history_link)
 
-def send_news():
+def send_news(environment):
     """
     Generates the main page and news block HTML content, then sends the email.
 
@@ -239,8 +239,17 @@ def send_news():
 
         news_ids = send_email(main_page_html, news_block_html, pending_news)
 
-        # update_news_main_page_status(main_page_content.main_page_news_id)
-        # update_news_block_status(news_ids)
+        if environment == "Development":
+            logging.info("Sending email in Development environment...")
+
+        elif environment == "Production":
+            if 9 in news_ids:
+                news_ids.remove(9)
+
+            update_news_main_page_status(main_page_content.main_page_news_id)
+            update_news_block_status(news_ids)
+            logging.info("Sending email in Production environment...")
+
 
         save_email_history(main_page_content.main_page_news_id,main_page_content.news_date, news_main_page,
                            pending_news)
